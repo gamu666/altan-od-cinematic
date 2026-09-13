@@ -2,7 +2,7 @@
 
 import { Suspense, useLayoutEffect, useMemo, useRef } from "react";
 import { Canvas, useFrame, useThree } from "@react-three/fiber";
-import { ContactShadows, Preload, useGLTF } from "@react-three/drei";
+import { ContactShadows, Environment, Lightformer, Preload, useGLTF } from "@react-three/drei";
 import * as THREE from "three";
 import gsap from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
@@ -29,6 +29,8 @@ type StoryState = {
   supply: number;
 };
 
+const MODEL_URL = "/models/golden-star-balm.glb?v=2";
+
 const initialStory: StoryState = {
   camX: 0,
   camY: 0,
@@ -42,7 +44,7 @@ const initialStory: StoryState = {
   rotX: -0.12,
   rotY: -0.32,
   rotZ: -0.08,
-  ambient: 0.08,
+  ambient: 0.025,
   gold: 0.2,
   red: 0.1,
   green: 0,
@@ -51,7 +53,7 @@ const initialStory: StoryState = {
   supply: 0,
 };
 
-function prepareScene(source: THREE.Group) {
+function prepareScene(source: THREE.Group, anisotropy: number) {
   const clone = source.clone(true);
   clone.traverse((object) => {
     if (!(object instanceof THREE.Mesh)) return;
@@ -59,7 +61,17 @@ function prepareScene(source: THREE.Group) {
     object.receiveShadow = true;
     const material = object.material as THREE.MeshStandardMaterial;
     if (material) {
-      material.envMapIntensity = 0.85;
+      material.envMapIntensity = 2.2;
+      material.metalness = 0.82;
+      material.roughness = 0.46;
+      material.normalScale?.set(0.58, 0.58);
+      material.side = THREE.FrontSide;
+      [material.map, material.metalnessMap, material.roughnessMap, material.normalMap]
+        .filter((texture): texture is THREE.Texture => Boolean(texture))
+        .forEach((texture) => {
+          texture.anisotropy = anisotropy;
+          texture.needsUpdate = true;
+        });
       material.needsUpdate = true;
     }
   });
@@ -67,8 +79,67 @@ function prepareScene(source: THREE.Group) {
 }
 
 function BalmModel({ source }: { source: THREE.Group }) {
-  const clone = useMemo(() => prepareScene(source), [source]);
+  const { gl } = useThree();
+  const clone = useMemo(
+    () => prepareScene(source, gl.capabilities.getMaxAnisotropy()),
+    [gl, source],
+  );
   return <primitive object={clone} />;
+}
+
+function StudioEnvironment() {
+  return (
+    <Environment resolution={512} background={false}>
+      <Lightformer
+        form="rect"
+        intensity={3.8}
+        color="#fff8ec"
+        position={[0, 3.6, 5.5]}
+        scale={[5.2, 1.35, 1]}
+        target={[0, 0, 0]}
+      />
+      <Lightformer
+        form="rect"
+        intensity={8}
+        color="#fff4df"
+        position={[-3.5, 4.5, 4.5]}
+        scale={[5.5, 1.4, 1]}
+        target={[0, 0, 0]}
+      />
+      <Lightformer
+        form="rect"
+        intensity={5}
+        color="#ffe0a0"
+        position={[4.5, 1.2, 3.5]}
+        scale={[1.2, 6, 1]}
+        target={[0, 0, 0]}
+      />
+      <Lightformer
+        form="rect"
+        intensity={4}
+        color="#ff332c"
+        position={[-4.5, -1.5, 1.5]}
+        scale={[2.5, 4, 1]}
+        target={[0, 0, 0]}
+      />
+      <Lightformer
+        form="ring"
+        intensity={4}
+        color="#f6c763"
+        position={[0, 2.5, -4]}
+        scale={3.5}
+        target={[0, 0, 0]}
+      />
+      <Lightformer
+        form="rect"
+        intensity={2.5}
+        color="#d8fff0"
+        position={[0, -4, 2]}
+        scale={[8, 1, 1]}
+        target={[0, 0, 0]}
+      />
+    </Environment>
+  );
 }
 
 function ParticleAtmosphere({ story }: { story: React.MutableRefObject<StoryState> }) {
@@ -195,7 +266,7 @@ function SupplyField({ source, story }: { source: THREE.Group; story: React.Muta
   });
 
   return (
-    <group ref={groupRef} visible={false} rotation={[0, Math.PI, 0]}>
+    <group ref={groupRef} visible={false}>
       {layout.map((item, index) => (
         <group key={index} position={item.position} rotation={item.rotation} scale={item.scale}>
           <BalmModel source={source} />
@@ -206,7 +277,7 @@ function SupplyField({ source, story }: { source: THREE.Group; story: React.Muta
 }
 
 function Scene() {
-  const { scene } = useGLTF("/models/golden-star-balm.glb");
+  const { scene } = useGLTF(MODEL_URL);
   const mainGroupRef = useRef<THREE.Group>(null);
   const ambientLightRef = useRef<THREE.AmbientLight>(null);
   const goldLightRef = useRef<THREE.SpotLight>(null);
@@ -236,7 +307,7 @@ function Scene() {
         rotX: -0.22,
         rotY: -0.16,
         rotZ: 0.035,
-        ambient: 0.55,
+        ambient: 0.14,
         gold: 5.2,
         red: 1.8,
       }, 0)
@@ -359,7 +430,7 @@ function Scene() {
       mainGroupRef.current.scale.setScalar(current.productScale);
       mainGroupRef.current.rotation.set(
         current.rotX + state.pointer.y * 0.055,
-        Math.PI + current.rotY + state.pointer.x * 0.07,
+        current.rotY + state.pointer.x * 0.07,
         current.rotZ,
       );
       mainGroupRef.current.position.y += Math.sin(state.clock.elapsedTime * 0.65) * 0.025;
@@ -374,11 +445,12 @@ function Scene() {
   return (
     <>
       <fog attach="fog" args={["#090202", 6.2, 15]} />
+      <StudioEnvironment />
       <ambientLight ref={ambientLightRef} intensity={initialStory.ambient} />
       <spotLight ref={goldLightRef} position={[2.8, 4.5, 5]} angle={0.42} penumbra={0.85} color="#ffd68a" castShadow />
       <pointLight ref={redLightRef} position={[-3.2, -1.3, 2.2]} color="#e51d24" distance={8} />
       <pointLight ref={greenLightRef} position={[3.3, 1.2, 1.5]} color="#2cac61" distance={7} />
-      <directionalLight position={[-3, 1, 4]} intensity={1.2} color="#fff0d2" />
+      <directionalLight position={[-3, 1, 4]} intensity={0.58} color="#fff0d2" />
 
       <group ref={mainGroupRef}>
         <BalmModel source={scene} />
@@ -398,12 +470,12 @@ export default function CinematicCanvas() {
     <Canvas
       className="webgl-canvas"
       camera={{ position: [0, 0, 7.5], fov: 34, near: 0.1, far: 100 }}
-      dpr={[1, 1.75]}
+      dpr={[1, 2]}
       gl={{ antialias: true, alpha: true, powerPreference: "high-performance" }}
       shadows={{ type: THREE.PCFShadowMap }}
       onCreated={({ gl }) => {
         gl.toneMapping = THREE.ACESFilmicToneMapping;
-        gl.toneMappingExposure = 1.05;
+        gl.toneMappingExposure = 1.28;
         gl.outputColorSpace = THREE.SRGBColorSpace;
       }}
     >
@@ -415,4 +487,4 @@ export default function CinematicCanvas() {
   );
 }
 
-useGLTF.preload("/models/golden-star-balm.glb");
+useGLTF.preload(MODEL_URL);
