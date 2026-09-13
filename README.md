@@ -2,6 +2,8 @@
 
 Desktop-first, scroll-driven product presentation for **Алтан Заан Анар** and **Алтан Од / Golden Star** Vietnamese balm.
 
+**Live site:** [gamu666.github.io/altan-od-cinematic](https://gamu666.github.io/altan-od-cinematic/)
+
 ## Run locally
 
 ```bash
@@ -16,8 +18,9 @@ Production check:
 ```bash
 pnpm lint
 pnpm build
-pnpm start
 ```
+
+The production build is exported to `out/` and deployed automatically to GitHub Pages from `main`.
 
 ## Stack
 

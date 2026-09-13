@@ -29,7 +29,7 @@ type StoryState = {
   supply: number;
 };
 
-const MODEL_URL = "/models/golden-star-balm.glb?v=2";
+const MODEL_URL = `${process.env.NEXT_PUBLIC_BASE_PATH ?? ""}/models/golden-star-balm.glb?v=3`;
 
 const initialStory: StoryState = {
   camX: 0,

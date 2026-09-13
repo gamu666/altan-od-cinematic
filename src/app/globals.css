@@ -309,6 +309,10 @@ a {
   will-change: transform, opacity;
 }
 
+.copy-left {
+  padding-right: 55vw;
+}
+
 .eyebrow {
   margin: 0 0 1.4rem;
   color: var(--gold);
@@ -322,16 +326,17 @@ a {
 .story-copy h2 {
   margin: 0;
   max-width: 9ch;
-  font-family: "Unbounded Variable", "Noto Sans Variable", "Segoe UI", sans-serif;
+  font-family: "Noto Sans Variable", "Noto Sans", "Segoe UI", Arial, sans-serif;
   font-size: clamp(4.2rem, 9.1vw, 10.3rem);
-  font-weight: 780;
-  letter-spacing: -0.065em;
-  line-height: 0.78;
+  font-weight: 880;
+  letter-spacing: -0.058em;
+  line-height: 0.86;
+  font-variation-settings: "wght" 880;
 }
 
 .story-copy h2 {
   font-size: clamp(3.25rem, 6.25vw, 7rem);
-  line-height: 0.86;
+  line-height: 0.92;
 }
 
 .hero-copy h1 span {
@@ -368,12 +373,13 @@ a {
 }
 
 .copy-right {
-  align-items: flex-end;
+  align-items: flex-start;
+  padding-left: 56vw;
   text-align: left;
 }
 
 .copy-right > * {
-  width: min(34rem, 38vw);
+  width: min(34rem, 37vw);
 }
 
 .support-copy {
@@ -394,10 +400,6 @@ a {
 .technical-note {
   margin-top: 2rem;
   color: var(--muted);
-}
-
-.ingredient-copy {
-  width: 58%;
 }
 
 .ingredient-orbit {
@@ -476,11 +478,6 @@ a {
   -webkit-text-stroke: 1px rgba(244, 238, 229, 0.72);
 }
 
-.company-copy,
-.final-copy {
-  width: 66%;
-}
-
 .company-copy h2,
 .final-copy h2 {
   max-width: 9ch;
@@ -553,7 +550,9 @@ a {
 @media (max-width: 980px) {
   .chapter-rail { display: none; }
   .story-copy { padding-inline: 2.5rem; }
-  .copy-right > * { width: min(30rem, 48vw); }
+  .copy-left { padding-right: 51vw; }
+  .copy-right { padding-left: 51vw; }
+  .copy-right > * { width: 44vw; }
   .route-copy { grid-template-columns: 1fr; text-align: center; }
   .route-point { position: absolute; bottom: 18%; }
   .route-point--start { left: 2.5rem; }
@@ -572,6 +571,8 @@ a {
   .company-copy,
   .final-copy,
   .ingredient-copy { width: 100%; }
+  .copy-left,
+  .copy-right { padding-inline: 1.25rem; }
   .copy-right { align-items: flex-start; }
   .hero-meta { align-items: flex-start; gap: 2rem; }
   .hero-meta > span { display: none; }

@@ -59,8 +59,8 @@ export function CinematicExperience() {
             ease: "power3.out",
             scrollTrigger: {
               trigger: section,
-              start: "top 62%",
-              end: "top 30%",
+              start: "top 25%",
+              end: "top 5%",
               scrub: 1,
             },
           },
@@ -69,12 +69,12 @@ export function CinematicExperience() {
           autoAlpha: 0,
           y: -34,
           ease: "power2.in",
-          scrollTrigger: {
-            trigger: section,
-            start: "bottom 48%",
-            end: "bottom 18%",
-            scrub: 1,
-          },
+            scrollTrigger: {
+              trigger: section,
+              start: "bottom 70%",
+              end: "bottom 50%",
+              scrub: 1,
+            },
         });
       });
     }, root);
@@ -113,7 +113,7 @@ export function CinematicExperience() {
       <div className="scroll-progress" aria-hidden="true"><div ref={progressRef} /></div>
 
       <section id="opening" className="story-section story-section--opening" data-scene="opening">
-        <div className="story-copy hero-copy">
+        <div className="story-copy copy-left hero-copy">
           <p className="eyebrow">VIETNAM · MONGOLIA</p>
           <h1><span>АЛТАН</span><span className="outlined">ОД</span></h1>
           <div className="hero-meta">
@@ -124,7 +124,7 @@ export function CinematicExperience() {
       </section>
 
       <section className="story-section story-section--product" data-scene="product">
-        <div className="story-copy copy-right">
+        <div className="story-copy copy-left">
           <p className="eyebrow">THE ICONIC RED TIN</p>
           <h2>НЭГ ДҮР.<br />НЭГ ТАНИЛ<br />МЭДРЭМЖ.</h2>
           <p className="support-copy">Улаан металл сав, ногоон од, үе дамжсан танил төрх.</p>
@@ -132,7 +132,7 @@ export function CinematicExperience() {
       </section>
 
       <section className="story-section story-section--macro" data-scene="macro">
-        <div className="story-copy macro-copy">
+        <div className="story-copy copy-right macro-copy">
           <p className="eyebrow">MACRO / 1970 → TODAY</p>
           <h2>ДЕТАЛЬ<br />БҮРТ ТҮҮХ<br />ХАДГАЛАГДАНА.</h2>
           <span className="technical-note">01 — LABEL / 02 — TIN / 03 — AROMA</span>
@@ -140,7 +140,7 @@ export function CinematicExperience() {
       </section>
 
       <section className="story-section story-section--ingredients" data-scene="ingredients">
-        <div className="story-copy ingredient-copy">
+        <div className="story-copy copy-left ingredient-copy">
           <p className="eyebrow">AROMATIC COMPOSITION</p>
           <h2>ЗУРГААН<br />ҮНЭРТ<br />ДАВХАРГА.</h2>
           <div className="ingredient-orbit" aria-label="Бүтээгдэхүүний найрлага">
@@ -162,7 +162,7 @@ export function CinematicExperience() {
       </section>
 
       <section className="story-section story-section--supply" data-scene="supply">
-        <div className="story-copy supply-copy">
+        <div className="story-copy copy-left supply-copy">
           <p className="eyebrow">SUPPLY IN MOTION</p>
           <h2>НЭГЭЭС<br />ОЛОН РУУ.</h2>
           <p className="support-copy">Тогтвортой нийлүүлэлт. Нэг танил бүтээгдэхүүн. Илүү өргөн хүрээ.</p>
@@ -170,7 +170,7 @@ export function CinematicExperience() {
       </section>
 
       <section className="story-section story-section--company" data-scene="company">
-        <div className="story-copy company-copy">
+        <div className="story-copy copy-left company-copy">
           <p className="eyebrow">DISTRIBUTED IN MONGOLIA</p>
           <h2>АЛТАН<br />ЗААН<br />АНАР</h2>
           <div className="company-line"><span>ЭМ ХАНГАН НИЙЛҮҮЛЭЛТ</span><span>УЛААНБААТАР</span></div>
@@ -178,7 +178,7 @@ export function CinematicExperience() {
       </section>
 
       <section id="contact" className="story-section story-section--final" data-scene="final">
-        <div className="story-copy final-copy">
+        <div className="story-copy copy-left final-copy">
           <p className="eyebrow">LET’S CONNECT</p>
           <h2>ХАМТЫН<br />АЖИЛЛАГАА<br />ЭНДЭЭС.</h2>
           <div className="contact-links">

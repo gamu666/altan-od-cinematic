@@ -1,6 +1,5 @@
 import type { Metadata, Viewport } from "next";
 import "@fontsource-variable/noto-sans/wght.css";
-import "@fontsource-variable/unbounded/wght.css";
 import "./globals.css";
 
 export const metadata: Metadata = {
