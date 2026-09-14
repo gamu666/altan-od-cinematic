@@ -25,7 +25,6 @@ type StoryState = {
   red: number;
   green: number;
   atmosphere: number;
-  route: number;
   supply: number;
 };
 
@@ -40,7 +39,7 @@ const initialStory: StoryState = {
   productX: 1.25,
   productY: -0.1,
   productZ: 0,
-  productScale: 0.55,
+  productScale: 0.72,
   rotX: -0.12,
   rotY: -0.32,
   rotZ: -0.08,
@@ -49,7 +48,6 @@ const initialStory: StoryState = {
   red: 0.1,
   green: 0,
   atmosphere: 0,
-  route: 0,
   supply: 0,
 };
 
@@ -184,59 +182,6 @@ function ParticleAtmosphere({ story }: { story: React.MutableRefObject<StoryStat
   );
 }
 
-function RouteArc({ story }: { story: React.MutableRefObject<StoryState> }) {
-  const groupRef = useRef<THREE.Group>(null);
-  const lineMaterialRef = useRef<THREE.MeshBasicMaterial>(null);
-  const glowMaterialRef = useRef<THREE.MeshBasicMaterial>(null);
-  const travelerRef = useRef<THREE.Mesh>(null);
-  const curve = useMemo(
-    () =>
-      new THREE.CatmullRomCurve3([
-        new THREE.Vector3(-3.8, -0.9, -0.8),
-        new THREE.Vector3(-1.9, 1.1, 0.1),
-        new THREE.Vector3(0.2, 1.6, 0.5),
-        new THREE.Vector3(2.1, 0.65, 0.15),
-        new THREE.Vector3(3.8, -0.45, -0.9),
-      ]),
-    [],
-  );
-
-  useFrame((state) => {
-    const progress = story.current.route;
-    if (!groupRef.current || !lineMaterialRef.current || !glowMaterialRef.current || !travelerRef.current) return;
-    groupRef.current.visible = progress > 0.01;
-    lineMaterialRef.current.opacity = progress * 0.9;
-    glowMaterialRef.current.opacity = progress * 0.18;
-    travelerRef.current.position.copy(curve.getPointAt(THREE.MathUtils.clamp(progress, 0, 1)));
-    const pulse = 1 + Math.sin(state.clock.elapsedTime * 4) * 0.18;
-    travelerRef.current.scale.setScalar(pulse * progress);
-  });
-
-  return (
-    <group ref={groupRef} visible={false}>
-      <mesh>
-        <tubeGeometry args={[curve, 96, 0.012, 8, false]} />
-        <meshBasicMaterial ref={lineMaterialRef} color="#ffc75f" transparent opacity={0} />
-      </mesh>
-      <mesh>
-        <tubeGeometry args={[curve, 96, 0.055, 8, false]} />
-        <meshBasicMaterial
-          ref={glowMaterialRef}
-          color="#e32622"
-          transparent
-          opacity={0}
-          depthWrite={false}
-          blending={THREE.AdditiveBlending}
-        />
-      </mesh>
-      <mesh ref={travelerRef}>
-        <sphereGeometry args={[0.065, 24, 24]} />
-        <meshBasicMaterial color="#ffe8a6" toneMapped={false} />
-      </mesh>
-    </group>
-  );
-}
-
 function SupplyField({ source, story }: { source: THREE.Group; story: React.MutableRefObject<StoryState> }) {
   const groupRef = useRef<THREE.Group>(null);
   const layout = useMemo(
@@ -285,9 +230,16 @@ function Scene() {
   const greenLightRef = useRef<THREE.PointLight>(null);
   const { camera } = useThree();
   const story = useRef<StoryState>({ ...initialStory });
+  const intro = useRef({ progress: 0 });
 
   useLayoutEffect(() => {
     gsap.registerPlugin(ScrollTrigger);
+    const introTween = gsap.to(intro.current, {
+      progress: 1,
+      duration: 2.6,
+      delay: 0.35,
+      ease: "power4.out",
+    });
     const timeline = gsap.timeline({
       defaults: { ease: "power2.inOut", duration: 1 },
       scrollTrigger: {
@@ -365,7 +317,6 @@ function Scene() {
         rotY: 0.38,
         rotZ: -0.05,
         atmosphere: 0.34,
-        route: 1,
         green: 0.9,
         gold: 5.8,
         red: 2.3,
@@ -377,7 +328,6 @@ function Scene() {
         productScale: 0.34,
         rotY: 0.8,
         atmosphere: 0.12,
-        route: 0,
         supply: 1,
         gold: 6.2,
         red: 2.7,
@@ -415,6 +365,7 @@ function Scene() {
       }, 7);
 
     return () => {
+      introTween.kill();
       timeline.scrollTrigger?.kill();
       timeline.kill();
     };
@@ -426,14 +377,19 @@ function Scene() {
     camera.lookAt(current.lookX, current.lookY, 0);
 
     if (mainGroupRef.current) {
-      mainGroupRef.current.position.set(current.productX, current.productY, current.productZ);
-      mainGroupRef.current.scale.setScalar(current.productScale);
+      const entrance = THREE.MathUtils.smootherstep(intro.current.progress, 0, 1);
+      mainGroupRef.current.position.set(
+        current.productX,
+        current.productY,
+        current.productZ + THREE.MathUtils.lerp(-9, 0, entrance),
+      );
+      mainGroupRef.current.scale.setScalar(current.productScale * THREE.MathUtils.lerp(0.05, 1, entrance));
       mainGroupRef.current.rotation.set(
-        current.rotX + state.pointer.y * 0.055,
-        current.rotY + state.pointer.x * 0.07,
+        current.rotX + state.pointer.y * 0.055 + THREE.MathUtils.lerp(-0.32, 0, entrance),
+        current.rotY + state.pointer.x * 0.07 + THREE.MathUtils.lerp(-0.9, 0, entrance),
         current.rotZ,
       );
-      mainGroupRef.current.position.y += Math.sin(state.clock.elapsedTime * 0.65) * 0.025;
+      mainGroupRef.current.position.y += Math.sin(state.clock.elapsedTime * 0.65) * 0.025 * entrance;
     }
 
     if (ambientLightRef.current) ambientLightRef.current.intensity = THREE.MathUtils.damp(ambientLightRef.current.intensity, current.ambient, 4, delta);
@@ -457,7 +413,6 @@ function Scene() {
       </group>
 
       <ParticleAtmosphere story={story} />
-      <RouteArc story={story} />
       <SupplyField source={scene} story={story} />
 
       <ContactShadows position={[0, -1.45, -0.45]} opacity={0.36} scale={9} blur={2.8} far={4.5} color="#250704" />

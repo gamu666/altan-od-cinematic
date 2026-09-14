@@ -47,27 +47,61 @@ export function CinematicExperience() {
         },
       });
 
+      const routeSection = root.querySelector(".story-section--route");
+      const routeLine = root.querySelector(".route-track span");
+      const routeDot = root.querySelector(".route-track i");
+      if (routeSection && routeLine && routeDot) {
+        gsap.fromTo(routeLine, { scaleX: 0 }, {
+          scaleX: 1,
+          ease: "none",
+          scrollTrigger: {
+            trigger: routeSection,
+            start: "top 45%",
+            end: "top 5%",
+            scrub: 0.8,
+          },
+        });
+        gsap.fromTo(routeDot, { left: "0%" }, {
+          left: "100%",
+          ease: "none",
+          scrollTrigger: {
+            trigger: routeSection,
+            start: "top 45%",
+            end: "top 5%",
+            scrub: 0.8,
+          },
+        });
+      }
+
       gsap.utils.toArray<HTMLElement>(".story-copy").forEach((copy, index) => {
         const section = copy.closest(".story-section");
         if (!section || index === 0) return;
+        const isMacroCopy = copy.classList.contains("macro-copy");
+        const entranceX = copy.classList.contains("copy-right")
+          ? 72
+          : copy.classList.contains("copy-left")
+            ? -72
+            : 0;
         gsap.fromTo(
           copy,
-          { autoAlpha: 0, y: 42 },
+          { autoAlpha: 0, x: entranceX, y: 28 },
           {
             autoAlpha: 1,
+            x: 0,
             y: 0,
             ease: "power3.out",
             scrollTrigger: {
               trigger: section,
-              start: "top 25%",
-              end: "top 5%",
+              start: isMacroCopy ? "top 44%" : "top 25%",
+              end: isMacroCopy ? "top 27%" : "top 5%",
               scrub: 1,
             },
           },
         );
         gsap.to(copy, {
           autoAlpha: 0,
-          y: -34,
+          x: entranceX * 0.55,
+          y: -24,
           ease: "power2.in",
             scrollTrigger: {
               trigger: section,
@@ -115,9 +149,9 @@ export function CinematicExperience() {
       <section id="opening" className="story-section story-section--opening" data-scene="opening">
         <div className="story-copy copy-left hero-copy">
           <p className="eyebrow">VIETNAM · MONGOLIA</p>
-          <h1><span>АЛТАН</span><span className="outlined">ОД</span></h1>
+          <h1 className="hero-title"><span>АЛТАН</span><span>ОД</span></h1>
           <div className="hero-meta">
-            <p>Вьетнамын танил үнэр. Монголд хүрэх шинэ орон зай.</p>
+            <p>Вьетнамын үнэрт уламжлалыг Монголын өдөр тутамд ойртуулна.</p>
             <span>SCROLL TO ENTER</span>
           </div>
         </div>
@@ -126,15 +160,15 @@ export function CinematicExperience() {
       <section className="story-section story-section--product" data-scene="product">
         <div className="story-copy copy-left">
           <p className="eyebrow">THE ICONIC RED TIN</p>
-          <h2>НЭГ ДҮР.<br />НЭГ ТАНИЛ<br />МЭДРЭМЖ.</h2>
-          <p className="support-copy">Улаан металл сав, ногоон од, үе дамжсан танил төрх.</p>
+          <h2>ТАНИЛ ТӨРХ.<br />ТҮҮХТ<br />ҮНЭР.</h2>
+          <p className="support-copy">Улаан металл савнаас ногоон од хүртэл — үе дамжин танигдсан дүр төрх.</p>
         </div>
       </section>
 
-      <section className="story-section story-section--macro" data-scene="macro">
+      <section id="macro" className="story-section story-section--macro" data-scene="macro">
         <div className="story-copy copy-right macro-copy">
           <p className="eyebrow">MACRO / 1970 → TODAY</p>
-          <h2>ДЕТАЛЬ<br />БҮРТ ТҮҮХ<br />ХАДГАЛАГДАНА.</h2>
+          <h2><span>ДЕТАЛЬ</span><span>БҮРТ ТҮҮХ</span><span>ХАДГАЛАГДАНА.</span></h2>
           <span className="technical-note">01 — LABEL / 02 — TIN / 03 — AROMA</span>
         </div>
       </section>
@@ -142,7 +176,7 @@ export function CinematicExperience() {
       <section className="story-section story-section--ingredients" data-scene="ingredients">
         <div className="story-copy copy-left ingredient-copy">
           <p className="eyebrow">AROMATIC COMPOSITION</p>
-          <h2>ЗУРГААН<br />ҮНЭРТ<br />ДАВХАРГА.</h2>
+          <h2>ЗУРГААН ҮНЭР.<br />НЭГ<br />ТЭНЦВЭР.</h2>
           <div className="ingredient-orbit" aria-label="Бүтээгдэхүүний найрлага">
             <span>MENTHOL</span><span>CAMPHOR</span><span>PEPPERMINT</span>
             <span>EUCALYPTUS</span><span>BASIL</span><span>CINNAMON</span>
@@ -150,22 +184,23 @@ export function CinematicExperience() {
         </div>
       </section>
 
-      <section className="story-section story-section--route" data-scene="route">
+      <section id="route" className="story-section story-section--route" data-scene="route">
         <div className="story-copy route-copy">
+          <div className="route-track" aria-hidden="true"><span /><i /></div>
           <div className="route-point route-point--start"><small>21°01′N</small><strong>VIETNAM</strong></div>
           <div className="route-statement">
-            <p className="eyebrow">A CONTINUOUS JOURNEY</p>
-            <h2>ӨМНӨДИЙН<br />ҮНЭРЭЭС<br />ТАЛЫН ОРОНД.</h2>
+            <p className="eyebrow">ONE CONTINUOUS JOURNEY</p>
+            <h2>ВЬЕТНАМААС<br />МОНГОЛ<br />РУУ.</h2>
           </div>
           <div className="route-point route-point--end"><small>47°55′N</small><strong>MONGOLIA</strong></div>
         </div>
       </section>
 
-      <section className="story-section story-section--supply" data-scene="supply">
+      <section id="supply" className="story-section story-section--supply" data-scene="supply">
         <div className="story-copy copy-left supply-copy">
           <p className="eyebrow">SUPPLY IN MOTION</p>
-          <h2>НЭГЭЭС<br />ОЛОН РУУ.</h2>
-          <p className="support-copy">Тогтвортой нийлүүлэлт. Нэг танил бүтээгдэхүүн. Илүү өргөн хүрээ.</p>
+          <h2>НЭГ САВНААС<br />ӨРГӨН ХҮРЭЭ<br />РҮҮ.</h2>
+          <p className="support-copy">Тогтвортой татан авалт. Найдвартай түгээлт. Илүү өргөн хүртээмж.</p>
         </div>
       </section>
 
@@ -180,7 +215,7 @@ export function CinematicExperience() {
       <section id="contact" className="story-section story-section--final" data-scene="final">
         <div className="story-copy copy-left final-copy">
           <p className="eyebrow">LET’S CONNECT</p>
-          <h2>ХАМТЫН<br />АЖИЛЛАГАА<br />ЭНДЭЭС.</h2>
+          <h2>ХАМТЫН ӨСӨЛТ<br />ЭНДЭЭС<br />ЭХЭЛНЭ.</h2>
           <div className="contact-links">
             <a href="tel:+97677115129">7711-5129 <span>↗</span></a>
             <a href="tel:+97688085129">8808-5129 <span>↗</span></a>
