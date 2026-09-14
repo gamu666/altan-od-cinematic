@@ -28,7 +28,7 @@ type StoryState = {
   supply: number;
 };
 
-const MODEL_URL = `${process.env.NEXT_PUBLIC_BASE_PATH ?? ""}/models/golden-star-balm.glb?v=4`;
+const MODEL_URL = `${process.env.NEXT_PUBLIC_BASE_PATH ?? ""}/models/golden-star-balm.glb?v=5`;
 
 const initialStory: StoryState = {
   camX: 0,
@@ -361,8 +361,8 @@ function Scene() {
 
     const introTween = gsap.to(intro.current, {
       progress: 1,
-      duration: 1,
-      ease: "power4.out",
+      duration: 1.35,
+      ease: "power3.out",
     });
     const sections = gsap.utils.toArray<HTMLElement>("#film .story-section");
     const sceneTweens = sections.slice(1).map((section, index) =>
@@ -408,12 +408,12 @@ function Scene() {
       mainGroupRef.current.position.set(
         current.productX,
         current.productY + Math.sin(state.clock.elapsedTime * 0.65) * 0.025 * entrance,
-        current.productZ + THREE.MathUtils.lerp(-9, 0, entrance),
+        current.productZ + THREE.MathUtils.lerp(1.15, 0, entrance),
       );
-      mainGroupRef.current.scale.setScalar(current.productScale * THREE.MathUtils.lerp(0.05, 1, entrance));
+      mainGroupRef.current.scale.setScalar(current.productScale * THREE.MathUtils.lerp(1.58, 1, entrance));
       mainGroupRef.current.rotation.set(
-        current.rotX + pointerMotion.current.y * 0.1 + THREE.MathUtils.lerp(-0.32, 0, entrance),
-        current.rotY + pointerMotion.current.x * 0.16 + THREE.MathUtils.lerp(-0.9, 0, entrance),
+        current.rotX + pointerMotion.current.y * 0.1 + THREE.MathUtils.lerp(-0.12, 0, entrance),
+        current.rotY + pointerMotion.current.x * 0.16 + THREE.MathUtils.lerp(-0.18, 0, entrance),
         current.rotZ,
       );
     }

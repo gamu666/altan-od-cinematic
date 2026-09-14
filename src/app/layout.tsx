@@ -13,9 +13,21 @@ export const viewport: Viewport = {
   colorScheme: "dark",
 };
 
+const basePath = process.env.NEXT_PUBLIC_BASE_PATH ?? "";
+
 export default function RootLayout({ children }: Readonly<{ children: React.ReactNode }>) {
   return (
     <html lang="mn">
+      <head>
+        <link
+          rel="preload"
+          href={`${basePath}/models/golden-star-balm.glb?v=5`}
+          as="fetch"
+          type="model/gltf-binary"
+          crossOrigin="anonymous"
+          fetchPriority="high"
+        />
+      </head>
       <body>{children}</body>
     </html>
   );

@@ -21,8 +21,10 @@ body {
   overflow-x: hidden;
   background: var(--black);
   color: var(--ink);
-  font-family: "Noto Sans Variable", "Noto Sans", "Segoe UI", sans-serif;
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "Noto Sans Variable", "Noto Sans", sans-serif;
   text-rendering: geometricPrecision;
+  -webkit-font-smoothing: antialiased;
+  font-feature-settings: "kern" 1, "liga" 1;
 }
 
 a {
@@ -345,12 +347,12 @@ a {
 .story-copy h2 {
   margin: 0;
   max-width: 9ch;
-  font-family: "Noto Sans Variable", "Noto Sans", "Segoe UI", Arial, sans-serif;
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "Noto Sans Variable", "Noto Sans", sans-serif;
   font-size: clamp(4.2rem, 9.1vw, 10.3rem);
-  font-weight: 880;
-  letter-spacing: -0.058em;
-  line-height: 0.86;
-  font-variation-settings: "wght" 880;
+  font-weight: 740;
+  letter-spacing: -0.052em;
+  line-height: 0.9;
+  font-variation-settings: "wght" 740;
 }
 
 .story-copy h2 {
@@ -363,6 +365,10 @@ a {
   width: max-content;
   max-width: none !important;
   isolation: isolate;
+  font-size: clamp(4.6rem, 7.2vw, 8.5rem) !important;
+  font-weight: 720 !important;
+  line-height: 0.96 !important;
+  letter-spacing: -0.055em !important;
 }
 
 .hero-copy .eyebrow,
@@ -382,22 +388,78 @@ a {
 
 .hero-title span {
   display: block;
-  color: #f5c247;
-  background: none;
-  -webkit-text-fill-color: currentColor;
-  text-shadow: 0 0 12px rgba(238, 170, 42, 0.24);
-  animation: title-pulse 4.4s ease-in-out infinite;
+  color: transparent;
+  background: linear-gradient(100deg, #9c5c0d 0%, #e6a72d 20%, #fff0a4 43%, #f4c44e 56%, #bd7715 74%, #f5cd61 100%);
+  background-size: 180% 100%;
+  background-clip: text;
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  animation: gold-sheen 5.2s ease-in-out infinite;
 }
 
-@keyframes title-pulse {
-  0%, 100% { color: #f2b936; text-shadow: 0 0 9px rgba(238, 170, 42, 0.18); }
-  50% { color: #ffda6d; text-shadow: 0 0 17px rgba(255, 201, 74, 0.36); }
+@keyframes gold-sheen {
+  0%, 18% { background-position: 100% 50%; }
+  52%, 100% { background-position: 0% 50%; }
+}
+
+.title-sparkle {
+  position: absolute;
+  z-index: 2;
+  width: 1px;
+  height: 1px;
+  opacity: 0;
+  pointer-events: none;
+  animation: title-sparkle 3.8s ease-in-out infinite;
+}
+
+.title-sparkle::before,
+.title-sparkle::after {
+  content: "";
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  border-radius: 999px;
+  background: linear-gradient(90deg, transparent, #fff4bd, transparent);
+  transform: translate(-50%, -50%);
+}
+
+.title-sparkle::before {
+  width: 1.9rem;
+  height: 1px;
+}
+
+.title-sparkle::after {
+  width: 1px;
+  height: 1.9rem;
+  background: linear-gradient(180deg, transparent, #fff4bd, transparent);
+}
+
+.title-sparkle--one {
+  left: 17%;
+  top: 8%;
+  animation-delay: 0.7s;
+}
+
+.title-sparkle--two {
+  right: 28%;
+  top: 22%;
+  animation-delay: 2.15s;
+}
+
+.title-sparkle--three {
+  right: 4%;
+  bottom: 12%;
+  animation-delay: 3.05s;
+}
+
+@keyframes title-sparkle {
+  0%, 14%, 100% { opacity: 0; transform: scale(0.28) rotate(0deg); }
+  20% { opacity: 1; transform: scale(1) rotate(45deg); }
+  30% { opacity: 0; transform: scale(1.5) rotate(60deg); }
 }
 
 .hero-meta {
-  display: flex;
-  align-items: flex-end;
-  justify-content: space-between;
+  display: block;
   width: min(39rem, 48vw);
   margin-top: 2.2rem;
   color: var(--muted);
@@ -736,7 +798,7 @@ a {
   right: 2.3rem;
   bottom: 3rem;
   display: flex;
-  justify-content: space-between;
+  justify-content: flex-start;
   color: rgba(244, 238, 229, 0.34);
   font-size: 0.6rem;
   letter-spacing: 0.18em;
@@ -806,5 +868,6 @@ a {
   html { scroll-behavior: auto; }
   .film-grain,
   .canvas-loading span::after,
-  .hero-title span { animation: none; }
+  .hero-title span,
+  .title-sparkle { animation: none; }
 }

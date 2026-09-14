@@ -7,12 +7,7 @@ import { ScrollTrigger } from "gsap/ScrollTrigger";
 
 const CinematicCanvas = dynamic(() => import("./cinematic-canvas"), {
   ssr: false,
-  loading: () => (
-    <div className="canvas-loading" aria-live="polite">
-      <span />
-      <p>3D орчныг бэлтгэж байна</p>
-    </div>
-  ),
+  loading: () => null,
 });
 
 const beats = [
@@ -239,19 +234,23 @@ export function CinematicExperience() {
 
       <section id="opening" className="story-section story-section--opening" data-scene="opening">
         <div className="story-copy copy-left hero-copy">
-          <p className="eyebrow">VIETNAM · MONGOLIA</p>
-          <h1 className="hero-title"><span>АЛТАН</span><span>ОД</span></h1>
+          <p className="eyebrow">АЛТАН ОД · ВЬЕТНАМ ГАВАР</p>
+          <h1 className="hero-title">
+            <span>Алтан Од</span>
+            <i className="title-sparkle title-sparkle--one" aria-hidden="true" />
+            <i className="title-sparkle title-sparkle--two" aria-hidden="true" />
+            <i className="title-sparkle title-sparkle--three" aria-hidden="true" />
+          </h1>
           <div className="hero-meta">
-            <p>Вьетнамын үнэрт уламжлалыг Монголын өдөр тутамд ойртуулна.</p>
-            <span>SCROLL TO ENTER</span>
+            <p>1970 оноос уламжлагдсан танил үнэр. Өдөр тутмын хэрэгцээнд ойр.</p>
           </div>
         </div>
       </section>
 
       <section className="story-section story-section--product" data-scene="product">
         <div className="story-copy copy-left">
-          <p className="eyebrow">THE ICONIC RED TIN</p>
-          <h2>ТАНИЛ ТӨРХ.<br />ТҮҮХТ<br />ҮНЭР.</h2>
+          <p className="eyebrow">1970 ОНООС ӨНӨӨГ ХҮРТЭЛ</p>
+          <h2>Танил төрх.<br />Түүхт үнэр.</h2>
           <p className="support-copy">1970 оноос өнөөдрийг хүртэл танил улаан металл сав, ногоон дэвсгэр дээрх алтан од.</p>
           <dl className="product-facts" aria-label="Бүтээгдэхүүний үндсэн мэдээлэл">
             <div><dt>ГАРАЛ</dt><dd>ВЬЕТНАМ</dd></div>
@@ -263,16 +262,15 @@ export function CinematicExperience() {
 
       <section id="macro" className="story-section story-section--macro" data-scene="macro">
         <div className="story-copy copy-right macro-copy">
-          <p className="eyebrow">MACRO / 1970 → TODAY</p>
-          <h2><span>ДЕТАЛЬ</span><span>БҮРТ ТҮҮХ</span><span>ХАДГАЛАГДАНА.</span></h2>
-          <span className="technical-note">01 — LABEL / 02 — TIN / 03 — AROMA</span>
+          <p className="eyebrow">ТАНИЛ МЕТАЛЛ САВ</p>
+          <h2><span>Деталь бүрт</span><span>түүх хадгалагдана.</span></h2>
         </div>
       </section>
 
       <section id="ingredients" className="story-section story-section--ingredients" data-scene="ingredients">
         <div className="story-copy copy-left ingredient-copy">
-          <p className="eyebrow">AROMATIC COMPOSITION · 100 ГР ТОСОНД</p>
-          <h2>ЗУРГААН<br />НАЙРЛАГА.<br />НЭГ ТАНИЛ<br />ҮНЭР.</h2>
+          <p className="eyebrow">100 ГР БҮТЭЭГДЭХҮҮНД</p>
+          <h2>Зургаан найрлага.<br />Нэг танил үнэр.</h2>
           <ol className="ingredient-ledger" aria-label="Бүтээгдэхүүний найрлага">
             <li><span><b>01</b>MENTHOL</span><strong>1.12 Г</strong></li>
             <li><span><b>02</b>CAMPHOR</span><strong>19.47 Г</strong></li>
@@ -286,8 +284,8 @@ export function CinematicExperience() {
 
       <section id="usage" className="story-section story-section--usage" data-scene="usage">
         <div className="story-copy copy-right usage-copy">
-          <p className="eyebrow">BROCHURE USE GUIDE</p>
-          <h2>ӨДӨР ТУТМЫН<br />ОЛОН ХЭРЭГЛЭЭ.</h2>
+          <p className="eyebrow">ХЭРЭГЛЭХ ЗААВАР</p>
+          <h2>Өдөр тутмын<br />олон хэрэглээ.</h2>
           <div className="usage-list" aria-label="Brochure-д заасан хэрэглээ">
             <p><b>01</b><span>Ханиад, томуу, хамар битүүрэх үед</span></p>
             <p><b>02</b><span>Толгой өвдөх, дотор муухайрах үед</span></p>
@@ -303,8 +301,8 @@ export function CinematicExperience() {
           <div className="route-track" aria-hidden="true"><span /><i /></div>
           <div className="route-point route-point--start"><small>21°01′N</small><strong>VIETNAM</strong></div>
           <div className="route-statement">
-            <p className="eyebrow">ONE CONTINUOUS JOURNEY</p>
-            <h2>ВЬЕТНАМААС<br />МОНГОЛ<br />РУУ.</h2>
+            <p className="eyebrow">ВЬЕТНАМААС МОНГОЛ РУУ</p>
+            <h2>Вьетнамаас<br />Монгол руу.</h2>
           </div>
           <div className="route-point route-point--end"><small>47°55′N</small><strong>MONGOLIA</strong></div>
         </div>
@@ -312,15 +310,15 @@ export function CinematicExperience() {
 
       <section id="supply" className="story-section story-section--supply" data-scene="supply">
         <div className="story-copy copy-left supply-copy">
-          <p className="eyebrow">SUPPLY IN MOTION</p>
-          <h2>НЭГ САВНААС<br />ӨРГӨН ХҮРЭЭ<br />РҮҮ.</h2>
+          <p className="eyebrow">ТОГТВОРТОЙ НИЙЛҮҮЛЭЛТ</p>
+          <h2>Нэг савнаас<br />өргөн хүрээ рүү.</h2>
           <p className="support-copy">Тогтвортой татан авалт. Найдвартай түгээлт. Илүү өргөн хүртээмж.</p>
         </div>
       </section>
 
       <section className="story-section story-section--company" data-scene="company">
         <div className="story-copy copy-left company-copy">
-          <p className="eyebrow">DISTRIBUTED IN MONGOLIA</p>
+          <p className="eyebrow">МОНГОЛ ДАХЬ АЛБАН ЁСНЫ НИЙЛҮҮЛЭЛТ</p>
           <h2>АЛТАН<br />ЗААН<br />АНАР</h2>
           <div className="company-line"><span>ЭМ ХАНГАН НИЙЛҮҮЛЭЛТ</span><span>УЛААНБААТАР</span></div>
         </div>
@@ -328,15 +326,15 @@ export function CinematicExperience() {
 
       <section id="contact" className="story-section story-section--final" data-scene="final">
         <div className="story-copy copy-left final-copy">
-          <p className="eyebrow">LET’S CONNECT</p>
-          <h2>ХАМТЫН ӨСӨЛТ<br />ЭНДЭЭС<br />ЭХЭЛНЭ.</h2>
+          <p className="eyebrow">ХОЛБОО БАРИХ</p>
+          <h2>Хамтын өсөлт<br />эндээс эхэлнэ.</h2>
           <div className="contact-links">
             <a href="tel:+97677115129">7711-5129 <span>↗</span></a>
             <a href="tel:+97688085129">8808-5129 <span>↗</span></a>
           </div>
           <p className="address">Баянгол дүүрэг, 19-р хороо, 65А байр · Улаанбаатар</p>
         </div>
-        <footer className="film-footer"><span>АЛТАН ЗААН АНАР ХХК</span><span>ТАНИЛЦУУЛГА · 2026</span></footer>
+        <footer className="film-footer"><span>АЛТАН ЗААН АНАР ХХК</span></footer>
       </section>
     </main>
   );
