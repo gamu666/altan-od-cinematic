@@ -1,17 +1,12 @@
 "use client";
 
-import dynamic from "next/dynamic";
 import { useLayoutEffect, useRef } from "react";
 import gsap from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
-
-const CinematicCanvas = dynamic(() => import("./cinematic-canvas"), {
-  ssr: false,
-  loading: () => null,
-});
+import CinematicCanvas from "./cinematic-canvas";
 
 const beats = [
-  { number: "01", label: "Нээлт" },
+  { number: "01", label: "Эхлэл" },
   { number: "02", label: "Алтан Од" },
   { number: "03", label: "Деталь" },
   { number: "04", label: "Найрлага" },

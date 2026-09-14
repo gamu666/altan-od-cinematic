@@ -2,7 +2,7 @@
 
 import { Suspense, useLayoutEffect, useMemo, useRef } from "react";
 import { Canvas, useFrame, useThree } from "@react-three/fiber";
-import { ContactShadows, Environment, Lightformer, Preload, useGLTF } from "@react-three/drei";
+import { Environment, Lightformer, useGLTF } from "@react-three/drei";
 import * as THREE from "three";
 import gsap from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
@@ -199,7 +199,7 @@ function BalmModel({ source }: { source: THREE.Group }) {
 
 function StudioEnvironment() {
   return (
-    <Environment resolution={512} background={false}>
+    <Environment resolution={256} background={false}>
       <Lightformer
         form="rect"
         intensity={3.8}
@@ -345,6 +345,7 @@ function Scene() {
   const intro = useRef({ progress: 0 });
   const pointerTarget = useRef({ x: 0, y: 0 });
   const pointerMotion = useRef({ x: 0, y: 0 });
+  const lookMotion = useRef({ x: initialStory.lookX, y: initialStory.lookY });
 
   useLayoutEffect(() => {
     gsap.registerPlugin(ScrollTrigger);
@@ -361,8 +362,8 @@ function Scene() {
 
     const introTween = gsap.to(intro.current, {
       progress: 1,
-      duration: 1.35,
-      ease: "power3.out",
+      duration: 0.95,
+      ease: "power4.out",
     });
     const sections = gsap.utils.toArray<HTMLElement>("#film .story-section");
     const sceneTweens = sections.slice(1).map((section, index) =>
@@ -400,22 +401,32 @@ function Scene() {
     const current = story.current;
     pointerMotion.current.x = THREE.MathUtils.damp(pointerMotion.current.x, pointerTarget.current.x, 5, delta);
     pointerMotion.current.y = THREE.MathUtils.damp(pointerMotion.current.y, pointerTarget.current.y, 5, delta);
-    camera.position.set(current.camX, current.camY, current.camZ);
-    camera.lookAt(current.lookX, current.lookY, 0);
+    camera.position.set(
+      THREE.MathUtils.damp(camera.position.x, current.camX, 9, delta),
+      THREE.MathUtils.damp(camera.position.y, current.camY, 9, delta),
+      THREE.MathUtils.damp(camera.position.z, current.camZ, 9, delta),
+    );
+    lookMotion.current.x = THREE.MathUtils.damp(lookMotion.current.x, current.lookX, 9, delta);
+    lookMotion.current.y = THREE.MathUtils.damp(lookMotion.current.y, current.lookY, 9, delta);
+    camera.lookAt(lookMotion.current.x, lookMotion.current.y, 0);
 
     if (mainGroupRef.current) {
-      const entrance = THREE.MathUtils.smootherstep(intro.current.progress, 0, 1);
-      mainGroupRef.current.position.set(
-        current.productX,
-        current.productY + Math.sin(state.clock.elapsedTime * 0.65) * 0.025 * entrance,
-        current.productZ + THREE.MathUtils.lerp(1.15, 0, entrance),
-      );
-      mainGroupRef.current.scale.setScalar(current.productScale * THREE.MathUtils.lerp(1.58, 1, entrance));
-      mainGroupRef.current.rotation.set(
-        current.rotX + pointerMotion.current.y * 0.1 + THREE.MathUtils.lerp(-0.12, 0, entrance),
-        current.rotY + pointerMotion.current.x * 0.16 + THREE.MathUtils.lerp(-0.18, 0, entrance),
-        current.rotZ,
-      );
+      const entrance = intro.current.progress;
+      const targetX = current.productX;
+      const targetY = current.productY + Math.sin(state.clock.elapsedTime * 0.65) * 0.025 * entrance;
+      const targetZ = current.productZ + THREE.MathUtils.lerp(0.9, 0, entrance);
+      const targetScale = current.productScale * THREE.MathUtils.lerp(1.72, 1, entrance);
+      const targetRotX = current.rotX + pointerMotion.current.y * 0.1 + THREE.MathUtils.lerp(-0.08, 0, entrance);
+      const targetRotY = current.rotY + pointerMotion.current.x * 0.16 + THREE.MathUtils.lerp(-0.12, 0, entrance);
+
+      mainGroupRef.current.position.x = THREE.MathUtils.damp(mainGroupRef.current.position.x, targetX, 14, delta);
+      mainGroupRef.current.position.y = THREE.MathUtils.damp(mainGroupRef.current.position.y, targetY, 14, delta);
+      mainGroupRef.current.position.z = THREE.MathUtils.damp(mainGroupRef.current.position.z, targetZ, 14, delta);
+      const settledScale = THREE.MathUtils.damp(mainGroupRef.current.scale.x, targetScale, 14, delta);
+      mainGroupRef.current.scale.setScalar(settledScale);
+      mainGroupRef.current.rotation.x = THREE.MathUtils.damp(mainGroupRef.current.rotation.x, targetRotX, 14, delta);
+      mainGroupRef.current.rotation.y = THREE.MathUtils.damp(mainGroupRef.current.rotation.y, targetRotY, 14, delta);
+      mainGroupRef.current.rotation.z = THREE.MathUtils.damp(mainGroupRef.current.rotation.z, current.rotZ, 14, delta);
     }
 
     if (ambientLightRef.current) ambientLightRef.current.intensity = THREE.MathUtils.damp(ambientLightRef.current.intensity, current.ambient, 4, delta);
@@ -434,14 +445,18 @@ function Scene() {
       <pointLight ref={greenLightRef} position={[3.3, 1.2, 1.5]} color="#2cac61" distance={7} />
       <directionalLight position={[-3, 1, 4]} intensity={0.76} color="#fff0d2" />
 
-      <group ref={mainGroupRef}>
+      <group
+        ref={mainGroupRef}
+        position={[initialStory.productX, initialStory.productY, initialStory.productZ + 0.9]}
+        rotation={[initialStory.rotX - 0.08, initialStory.rotY - 0.12, initialStory.rotZ]}
+        scale={initialStory.productScale * 1.72}
+      >
         <BalmModel source={scene} />
       </group>
 
       <ParticleAtmosphere story={story} />
       <SupplyField source={scene} story={story} />
 
-      <ContactShadows position={[0, -1.45, -0.45]} opacity={0.36} scale={9} blur={2.8} far={4.5} color="#250704" />
     </>
   );
 }
@@ -450,9 +465,9 @@ export default function CinematicCanvas() {
   return (
     <Canvas
       className="webgl-canvas"
-      camera={{ position: [0, 0, 7.5], fov: 34, near: 0.1, far: 100 }}
-      dpr={[1, 2]}
-      gl={{ antialias: true, alpha: true, powerPreference: "high-performance" }}
+      camera={{ position: [0, 0, initialStory.camZ], fov: 34, near: 0.1, far: 100 }}
+      dpr={[1, 1.5]}
+      gl={{ antialias: true, alpha: true, powerPreference: "high-performance", stencil: false }}
       shadows={{ type: THREE.PCFShadowMap }}
       onCreated={({ gl }) => {
         gl.toneMapping = THREE.ACESFilmicToneMapping;
@@ -462,7 +477,6 @@ export default function CinematicCanvas() {
     >
       <Suspense fallback={null}>
         <Scene />
-        <Preload all />
       </Suspense>
     </Canvas>
   );
