@@ -343,25 +343,26 @@ function Scene() {
   const { camera } = useThree();
   const story = useRef<StoryState>({ ...initialStory });
   const intro = useRef({ progress: 0 });
+  const pointerTarget = useRef({ x: 0, y: 0 });
+  const pointerMotion = useRef({ x: 0, y: 0 });
 
   useLayoutEffect(() => {
     gsap.registerPlugin(ScrollTrigger);
-    let introAnnounced = false;
-    const announceIntro = () => {
-      if (introAnnounced) return;
-      introAnnounced = true;
-      document.documentElement.dataset.balmIntro = "ready";
-      window.dispatchEvent(new Event("balm-intro-complete"));
+    const updatePointer = (event: PointerEvent) => {
+      pointerTarget.current.x = (event.clientX / window.innerWidth) * 2 - 1;
+      pointerTarget.current.y = -((event.clientY / window.innerHeight) * 2 - 1);
     };
+    const resetPointer = () => {
+      pointerTarget.current.x = 0;
+      pointerTarget.current.y = 0;
+    };
+    window.addEventListener("pointermove", updatePointer, { passive: true });
+    window.addEventListener("blur", resetPointer);
+
     const introTween = gsap.to(intro.current, {
       progress: 1,
-      duration: 1.35,
-      delay: 0.05,
+      duration: 1,
       ease: "power4.out",
-      onUpdate: () => {
-        if (intro.current.progress >= 0.72) announceIntro();
-      },
-      onComplete: announceIntro,
     });
     const sections = gsap.utils.toArray<HTMLElement>("#film .story-section");
     const sceneTweens = sections.slice(1).map((section, index) =>
@@ -385,6 +386,8 @@ function Scene() {
     );
 
     return () => {
+      window.removeEventListener("pointermove", updatePointer);
+      window.removeEventListener("blur", resetPointer);
       introTween.kill();
       sceneTweens.forEach((tween) => {
         tween.scrollTrigger?.kill();
@@ -395,6 +398,8 @@ function Scene() {
 
   useFrame((state, delta) => {
     const current = story.current;
+    pointerMotion.current.x = THREE.MathUtils.damp(pointerMotion.current.x, pointerTarget.current.x, 5, delta);
+    pointerMotion.current.y = THREE.MathUtils.damp(pointerMotion.current.y, pointerTarget.current.y, 5, delta);
     camera.position.set(current.camX, current.camY, current.camZ);
     camera.lookAt(current.lookX, current.lookY, 0);
 
@@ -407,8 +412,8 @@ function Scene() {
       );
       mainGroupRef.current.scale.setScalar(current.productScale * THREE.MathUtils.lerp(0.05, 1, entrance));
       mainGroupRef.current.rotation.set(
-        current.rotX + state.pointer.y * 0.055 + THREE.MathUtils.lerp(-0.32, 0, entrance),
-        current.rotY + state.pointer.x * 0.07 + THREE.MathUtils.lerp(-0.9, 0, entrance),
+        current.rotX + pointerMotion.current.y * 0.1 + THREE.MathUtils.lerp(-0.32, 0, entrance),
+        current.rotY + pointerMotion.current.x * 0.16 + THREE.MathUtils.lerp(-0.9, 0, entrance),
         current.rotZ,
       );
     }

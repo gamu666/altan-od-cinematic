@@ -1,7 +1,7 @@
 "use client";
 
 import dynamic from "next/dynamic";
-import { useEffect, useRef } from "react";
+import { useLayoutEffect, useRef } from "react";
 import gsap from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
 
@@ -31,47 +31,43 @@ export function CinematicExperience() {
   const filmRef = useRef<HTMLElement>(null);
   const progressRef = useRef<HTMLDivElement>(null);
 
-  useEffect(() => {
+  useLayoutEffect(() => {
     gsap.registerPlugin(ScrollTrigger);
     const root = filmRef.current;
     if (!root) return;
-    let openingTimeline: gsap.core.Timeline | undefined;
 
     const context = gsap.context(() => {
-      openingTimeline = gsap.timeline({ paused: true });
-      openingTimeline
+      gsap.timeline()
         .fromTo(".hero-copy .eyebrow", {
           autoAlpha: 0,
-          y: 12,
+          y: 8,
         }, {
           autoAlpha: 1,
           y: 0,
-          duration: 0.5,
+          duration: 0.28,
           ease: "power2.out",
         })
         .fromTo(".hero-title span", {
           autoAlpha: 0,
-          x: -42,
+          x: -24,
           clipPath: "inset(0 100% 0 0)",
-          filter: "brightness(3) blur(9px)",
         }, {
           autoAlpha: 1,
           x: 0,
           clipPath: "inset(0 0% 0 0)",
-          filter: "brightness(1) blur(0px)",
-          duration: 1.05,
-          stagger: 0.13,
+          duration: 0.62,
+          stagger: 0.08,
           ease: "power4.out",
-        }, "-=0.18")
+        }, "-=0.1")
         .fromTo(".hero-meta", {
           autoAlpha: 0,
-          y: 18,
+          y: 10,
         }, {
           autoAlpha: 1,
           y: 0,
-          duration: 0.72,
+          duration: 0.42,
           ease: "power3.out",
-        }, "-=0.52");
+        }, "-=0.28");
 
       gsap.to(progressRef.current, {
         scaleX: 1,
@@ -112,6 +108,28 @@ export function CinematicExperience() {
 
       const sections = gsap.utils.toArray<HTMLElement>(".story-section");
       const copies = gsap.utils.toArray<HTMLElement>(".story-copy");
+      const chapterRows = gsap.utils.toArray<HTMLElement>(".chapter-rail span");
+      const activateChapter = (activeIndex: number) => {
+        chapterRows.forEach((row, rowIndex) => {
+          row.classList.toggle("is-active", rowIndex === activeIndex);
+          if (rowIndex === activeIndex) row.setAttribute("aria-current", "step");
+          else row.removeAttribute("aria-current");
+        });
+      };
+
+      sections.forEach((section, index) => {
+        ScrollTrigger.create({
+          trigger: section,
+          start: "top 50%",
+          end: "bottom 50%",
+          onToggle: (self) => {
+            if (self.isActive) activateChapter(index);
+          },
+          onRefresh: (self) => {
+            if (self.isActive) activateChapter(index);
+          },
+        });
+      });
 
       copies.forEach((copy, index) => {
         const section = copy.closest<HTMLElement>(".story-section");
@@ -128,7 +146,6 @@ export function CinematicExperience() {
             gsap.to(copy, {
               autoAlpha: 0,
               x: -30,
-              filter: "blur(6px)",
               ease: "power2.in",
               scrollTrigger: {
                 trigger: nextSection,
@@ -141,14 +158,13 @@ export function CinematicExperience() {
           return;
         }
 
-        gsap.set(copy, { autoAlpha: 0, x: entranceX, filter: "blur(5px)" });
+        gsap.set(copy, { autoAlpha: 0, x: entranceX });
         gsap.fromTo(
           copy,
-          { autoAlpha: 0, x: entranceX, filter: "blur(5px)" },
+          { autoAlpha: 0, x: entranceX },
           {
             autoAlpha: 1,
             x: 0,
-            filter: "blur(0px)",
             ease: "power3.out",
             scrollTrigger: {
               trigger: section,
@@ -165,7 +181,6 @@ export function CinematicExperience() {
           gsap.to(copy, {
             autoAlpha: 0,
             x: entranceX * -0.45,
-            filter: "blur(4px)",
             ease: "power2.in",
             scrollTrigger: {
               trigger: nextSection,
@@ -178,16 +193,7 @@ export function CinematicExperience() {
       });
     }, root);
 
-    const revealOpening = () => {
-      root.querySelector(".hero-copy")?.classList.add("is-revealed");
-      openingTimeline?.play(0);
-    };
-    window.addEventListener("balm-intro-complete", revealOpening);
-    if (document.documentElement.dataset.balmIntro === "ready") revealOpening();
-
     return () => {
-      window.removeEventListener("balm-intro-complete", revealOpening);
-      delete document.documentElement.dataset.balmIntro;
       context.revert();
     };
   }, []);
@@ -222,7 +228,7 @@ export function CinematicExperience() {
 
       <aside className="chapter-rail" aria-label="Танилцуулгын бүлгүүд">
         {beats.map((beat) => (
-          <span key={beat.number}>
+          <span key={beat.number} className={beat.number === "01" ? "is-active" : undefined}>
             <b>{beat.number}</b>
             <em>{beat.label}</em>
           </span>
