@@ -28,28 +28,140 @@ type StoryState = {
   supply: number;
 };
 
-const MODEL_URL = `${process.env.NEXT_PUBLIC_BASE_PATH ?? ""}/models/golden-star-balm.glb?v=3`;
+const MODEL_URL = `${process.env.NEXT_PUBLIC_BASE_PATH ?? ""}/models/golden-star-balm.glb?v=4`;
 
 const initialStory: StoryState = {
   camX: 0,
   camY: 0,
-  camZ: 7.5,
+  camZ: 5.45,
   lookX: 0,
   lookY: 0,
-  productX: 1.25,
-  productY: -0.1,
+  productX: 1.35,
+  productY: 0,
   productZ: 0,
-  productScale: 0.72,
-  rotX: -0.12,
-  rotY: -0.32,
-  rotZ: -0.08,
-  ambient: 0.055,
-  gold: 0.35,
-  red: 0.18,
+  productScale: 1.03,
+  rotX: -0.2,
+  rotY: -0.22,
+  rotZ: 0.035,
+  ambient: 0.12,
+  gold: 4.8,
+  red: 1.5,
   green: 0,
   atmosphere: 0,
   supply: 0,
 };
+
+const sceneStates: StoryState[] = [
+  initialStory,
+  {
+    ...initialStory,
+    camZ: 5.15,
+    productX: 1.45,
+    productScale: 1.14,
+    rotX: -0.24,
+    rotY: -0.08,
+    gold: 5.6,
+    red: 1.9,
+  },
+  {
+    ...initialStory,
+    camX: -0.1,
+    camY: 0.1,
+    camZ: 4.05,
+    lookX: -0.3,
+    productX: -1.05,
+    productY: 0.08,
+    productScale: 1.34,
+    rotX: -0.3,
+    rotY: 0.46,
+    rotZ: -0.07,
+    gold: 6.8,
+    red: 2.7,
+  },
+  {
+    ...initialStory,
+    camZ: 5.25,
+    productX: 2.05,
+    productY: 0.12,
+    productScale: 0.86,
+    rotX: -0.37,
+    rotY: -0.58,
+    rotZ: 0.1,
+    atmosphere: 1,
+    green: 2.8,
+    gold: 5.2,
+    red: 1.4,
+  },
+  {
+    ...initialStory,
+    camZ: 5.7,
+    productX: -1.95,
+    productY: 0.08,
+    productScale: 0.78,
+    rotX: -0.24,
+    rotY: 0.42,
+    rotZ: -0.05,
+    atmosphere: 0.58,
+    green: 1.7,
+    gold: 5.8,
+    red: 1.8,
+  },
+  {
+    ...initialStory,
+    camZ: 5.9,
+    productX: 0,
+    productY: 0.62,
+    productZ: -0.8,
+    productScale: 0.54,
+    rotX: -0.18,
+    rotY: 0.34,
+    rotZ: -0.04,
+    atmosphere: 0.28,
+    green: 0.8,
+    gold: 5.8,
+    red: 2.1,
+  },
+  {
+    ...initialStory,
+    camZ: 6.8,
+    productY: -0.25,
+    productZ: -4,
+    productScale: 0.16,
+    rotY: 0.78,
+    atmosphere: 0.1,
+    supply: 1,
+    gold: 6.2,
+    red: 2.6,
+  },
+  {
+    ...initialStory,
+    camZ: 4.9,
+    lookX: 0.34,
+    productX: 1.78,
+    productY: 0.06,
+    productScale: 0.98,
+    rotX: -0.25,
+    rotY: -0.32,
+    rotZ: 0.06,
+    green: 0.45,
+    gold: 6.8,
+    red: 1.5,
+  },
+  {
+    ...initialStory,
+    camZ: 4.55,
+    lookX: 0.4,
+    productX: 1.9,
+    productY: 0.16,
+    productScale: 1.08,
+    rotX: -0.18,
+    rotY: 0.04,
+    rotZ: -0.03,
+    green: 0.2,
+    gold: 7.5,
+    red: 2.1,
+  },
+];
 
 function prepareScene(source: THREE.Group, anisotropy: number) {
   const clone = source.clone(true);
@@ -234,155 +346,50 @@ function Scene() {
 
   useLayoutEffect(() => {
     gsap.registerPlugin(ScrollTrigger);
+    let introAnnounced = false;
+    const announceIntro = () => {
+      if (introAnnounced) return;
+      introAnnounced = true;
+      document.documentElement.dataset.balmIntro = "ready";
+      window.dispatchEvent(new Event("balm-intro-complete"));
+    };
     const introTween = gsap.to(intro.current, {
       progress: 1,
-      duration: 2.6,
-      delay: 0.35,
+      duration: 1.35,
+      delay: 0.05,
       ease: "power4.out",
-      onComplete: () => window.dispatchEvent(new Event("balm-intro-complete")),
-    });
-    const timeline = gsap.timeline({
-      defaults: { ease: "power2.inOut", duration: 1 },
-      scrollTrigger: {
-        trigger: "#film",
-        start: "top top",
-        end: "bottom bottom",
-        scrub: 1.15,
-        invalidateOnRefresh: true,
+      onUpdate: () => {
+        if (intro.current.progress >= 0.72) announceIntro();
       },
+      onComplete: announceIntro,
     });
-
-    timeline
-      .to(story.current, {
-        camZ: 5.25,
-        productScale: 1.16,
-        productX: 1.05,
-        rotX: -0.22,
-        rotY: -0.16,
-        rotZ: 0.035,
-        ambient: 0.14,
-        gold: 5.2,
-        red: 1.8,
-      }, 0)
-      .to(story.current, {
-        camX: -0.12,
-        camY: 0.12,
-        camZ: 4.2,
-        lookX: -0.3,
-        productX: -0.85,
-        productY: 0.12,
-        productScale: 1.32,
-        rotX: -0.32,
-        rotY: 0.5,
-        rotZ: -0.08,
-        gold: 6.5,
-        red: 2.8,
-      }, 1)
-      .to(story.current, {
-        camX: 0.15,
-        camY: 0.04,
-        camZ: 2.35,
-        lookX: 0.55,
-        productX: 0.65,
-        productY: -0.12,
-        productScale: 1.52,
-        rotX: -0.04,
-        rotY: 0.03,
-        rotZ: 0.02,
-        gold: 7.6,
-        red: 3.7,
-      }, 2)
-      .to(story.current, {
-        camX: 0,
-        camY: 0,
-        camZ: 5.1,
-        lookX: 0,
-        productX: 2.15,
-        productY: 0.25,
-        productScale: 0.86,
-        rotX: -0.38,
-        rotY: -0.62,
-        rotZ: 0.12,
-        atmosphere: 1,
-        green: 2.8,
-        gold: 4.4,
-        red: 1.2,
-      }, 3)
-      .to(story.current, {
-        camZ: 5.8,
-        productX: -1.45,
-        productY: 0.12,
-        productZ: 0,
-        productScale: 0.88,
-        rotX: -0.26,
-        rotY: 0.46,
-        rotZ: -0.06,
-        atmosphere: 0.62,
-        green: 1.8,
-        gold: 5.6,
-        red: 1.8,
-      }, 4)
-      .to(story.current, {
-        camZ: 5.8,
-        productX: 0,
-        productY: -0.1,
-        productZ: -0.6,
-        productScale: 0.64,
-        rotX: -0.18,
-        rotY: 0.38,
-        rotZ: -0.05,
-        atmosphere: 0.34,
-        green: 0.9,
-        gold: 5.8,
-        red: 2.3,
-      }, 5)
-      .to(story.current, {
-        camZ: 6.8,
-        productY: -0.25,
-        productZ: -2,
-        productScale: 0.34,
-        rotY: 0.8,
-        atmosphere: 0.12,
-        supply: 1,
-        gold: 6.2,
-        red: 2.7,
-      }, 6)
-      .to(story.current, {
-        camX: 0,
-        camY: 0,
-        camZ: 4.8,
-        lookX: 0.35,
-        productX: 1.7,
-        productY: 0.05,
-        productZ: 0,
-        productScale: 1.02,
-        rotX: -0.26,
-        rotY: -0.35,
-        rotZ: 0.07,
-        supply: 0,
-        atmosphere: 0,
-        gold: 6.8,
-        red: 1.4,
-        green: 0.5,
-      }, 7)
-      .to(story.current, {
-        camZ: 4.4,
-        lookX: 0.42,
-        productX: 1.82,
-        productY: 0.2,
-        productScale: 1.12,
-        rotX: -0.18,
-        rotY: 0.06,
-        rotZ: -0.035,
-        gold: 7.8,
-        red: 2.2,
-        green: 0.25,
-      }, 8);
+    const sections = gsap.utils.toArray<HTMLElement>("#film .story-section");
+    const sceneTweens = sections.slice(1).map((section, index) =>
+      gsap.fromTo(
+        story.current,
+        { ...sceneStates[index] },
+        {
+          ...sceneStates[index + 1],
+          duration: 1,
+          ease: "power3.inOut",
+          immediateRender: false,
+          scrollTrigger: {
+            trigger: section,
+            start: "top 92%",
+            end: "top 22%",
+            scrub: 0.48,
+            invalidateOnRefresh: true,
+          },
+        },
+      ),
+    );
 
     return () => {
       introTween.kill();
-      timeline.scrollTrigger?.kill();
-      timeline.kill();
+      sceneTweens.forEach((tween) => {
+        tween.scrollTrigger?.kill();
+        tween.kill();
+      });
     };
   }, []);
 

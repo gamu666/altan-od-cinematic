@@ -110,43 +110,71 @@ export function CinematicExperience() {
         });
       }
 
-      gsap.utils.toArray<HTMLElement>(".story-copy").forEach((copy, index) => {
-        const section = copy.closest(".story-section");
-        if (!section || index === 0) return;
-        const isMacroCopy = copy.classList.contains("macro-copy");
+      const sections = gsap.utils.toArray<HTMLElement>(".story-section");
+      const copies = gsap.utils.toArray<HTMLElement>(".story-copy");
+
+      copies.forEach((copy, index) => {
+        const section = copy.closest<HTMLElement>(".story-section");
+        if (!section) return;
         const entranceX = copy.classList.contains("copy-right")
-          ? 72
+          ? 48
           : copy.classList.contains("copy-left")
-            ? -72
+            ? -48
             : 0;
+
+        if (index === 0) {
+          const nextSection = sections[1];
+          if (nextSection) {
+            gsap.to(copy, {
+              autoAlpha: 0,
+              x: -30,
+              filter: "blur(6px)",
+              ease: "power2.in",
+              scrollTrigger: {
+                trigger: nextSection,
+                start: "top 92%",
+                end: "top 70%",
+                scrub: 0.45,
+              },
+            });
+          }
+          return;
+        }
+
+        gsap.set(copy, { autoAlpha: 0, x: entranceX, filter: "blur(5px)" });
         gsap.fromTo(
           copy,
-          { autoAlpha: 0, x: entranceX, y: 28 },
+          { autoAlpha: 0, x: entranceX, filter: "blur(5px)" },
           {
             autoAlpha: 1,
             x: 0,
-            y: 0,
+            filter: "blur(0px)",
             ease: "power3.out",
             scrollTrigger: {
               trigger: section,
-              start: isMacroCopy ? "top 44%" : "top 25%",
-              end: isMacroCopy ? "top 27%" : "top 5%",
-              scrub: 1,
+              start: "top 62%",
+              end: "top 34%",
+              scrub: 0.5,
             },
           },
         );
-        gsap.to(copy, {
-          autoAlpha: 0,
-          x: entranceX * 0.55,
-          y: -24,
-          ease: "power2.in",
+
+        const sectionIndex = sections.indexOf(section);
+        const nextSection = sections[sectionIndex + 1];
+        if (nextSection) {
+          gsap.to(copy, {
+            autoAlpha: 0,
+            x: entranceX * -0.45,
+            filter: "blur(4px)",
+            ease: "power2.in",
             scrollTrigger: {
-              trigger: section,
-              start: "bottom 70%",
-              end: "bottom 50%",
-              scrub: 1,
+              trigger: nextSection,
+              start: "top 88%",
+              end: "top 66%",
+              scrub: 0.45,
             },
-        });
+          });
+        }
       });
     }, root);
 
@@ -155,9 +183,11 @@ export function CinematicExperience() {
       openingTimeline?.play(0);
     };
     window.addEventListener("balm-intro-complete", revealOpening);
+    if (document.documentElement.dataset.balmIntro === "ready") revealOpening();
 
     return () => {
       window.removeEventListener("balm-intro-complete", revealOpening);
+      delete document.documentElement.dataset.balmIntro;
       context.revert();
     };
   }, []);
@@ -251,7 +281,7 @@ export function CinematicExperience() {
       <section id="usage" className="story-section story-section--usage" data-scene="usage">
         <div className="story-copy copy-right usage-copy">
           <p className="eyebrow">BROCHURE USE GUIDE</p>
-          <h2>ӨДӨР ТУТМЫН<br />ОЛОН<br />ХЭРЭГЛЭЭ.</h2>
+          <h2>ӨДӨР ТУТМЫН<br />ОЛОН ХЭРЭГЛЭЭ.</h2>
           <div className="usage-list" aria-label="Brochure-д заасан хэрэглээ">
             <p><b>01</b><span>Ханиад, томуу, хамар битүүрэх үед</span></p>
             <p><b>02</b><span>Толгой өвдөх, дотор муухайрах үед</span></p>

@@ -59,10 +59,7 @@ a {
   position: relative;
   min-height: 100vh;
   isolation: isolate;
-  background:
-    radial-gradient(circle at 62% 34%, rgba(166, 35, 23, 0.23), transparent 38%),
-    radial-gradient(circle at 18% 78%, rgba(177, 113, 32, 0.13), transparent 36%),
-    var(--black);
+  background: transparent;
 }
 
 .cinematic-stage {
@@ -71,6 +68,10 @@ a {
   z-index: 0;
   overflow: hidden;
   pointer-events: none;
+  background:
+    radial-gradient(ellipse 72% 78% at 67% 38%, rgba(142, 28, 20, 0.2) 0%, rgba(80, 13, 10, 0.09) 46%, transparent 74%),
+    radial-gradient(ellipse 55% 70% at 14% 82%, rgba(168, 102, 26, 0.1) 0%, transparent 72%),
+    linear-gradient(135deg, #0d0303 0%, #180504 48%, #100303 100%);
 }
 
 .cinematic-stage::before,
@@ -112,7 +113,7 @@ a {
   display: grid;
   place-content: center;
   gap: 0.85rem;
-  background: var(--black);
+  background: transparent;
   color: var(--muted);
   font-size: 0.62rem;
   letter-spacing: 0.18em;
@@ -144,17 +145,20 @@ a {
 .depth-title {
   position: absolute;
   left: 50%;
-  top: 50%;
+  top: 54%;
   z-index: 1;
-  transform: translate(-50%, -52%);
+  transform: translate(-50%, -50%) scaleX(0.9);
   width: max-content;
-  color: rgba(231, 189, 97, 0.075);
-  font-size: clamp(7rem, 16vw, 18rem);
-  font-weight: 900;
-  letter-spacing: -0.075em;
-  line-height: 0.75;
+  color: transparent;
+  -webkit-text-stroke: 1px rgba(231, 189, 97, 0.1);
+  font-size: clamp(6.5rem, 13.5vw, 15rem);
+  font-weight: 760;
+  font-variation-settings: "wght" 760;
+  letter-spacing: -0.025em;
+  line-height: 0.82;
   white-space: nowrap;
   user-select: none;
+  opacity: 0.7;
 }
 
 .film-grain {
@@ -289,13 +293,13 @@ a {
 .story-section {
   position: relative;
   z-index: 5;
-  min-height: 112vh;
+  min-height: 140vh;
   pointer-events: none;
 }
 
 .story-section--opening,
 .story-section--final {
-  min-height: 118vh;
+  min-height: 140vh;
 }
 
 .story-copy {
@@ -310,6 +314,11 @@ a {
   will-change: transform, opacity;
 }
 
+.story-copy:not(.hero-copy) {
+  visibility: hidden;
+  opacity: 0;
+}
+
 .copy-left {
   padding-right: 55vw;
 }
@@ -317,10 +326,11 @@ a {
 .eyebrow {
   margin: 0 0 1.4rem;
   color: var(--gold);
-  font-size: clamp(0.55rem, 0.62vw, 0.7rem);
+  font-size: clamp(0.67rem, 0.69vw, 0.78rem);
   font-weight: 700;
-  letter-spacing: 0.24em;
+  letter-spacing: 0.2em;
   line-height: 1.4;
+  text-shadow: 0 0 18px rgba(231, 189, 97, 0.2);
 }
 
 .story-copy h1,
@@ -360,14 +370,16 @@ a {
   left: 47%;
   top: 48%;
   z-index: -1;
-  width: clamp(12rem, 22vw, 26rem);
+  width: clamp(28rem, 58vw, 70rem);
   aspect-ratio: 1;
   transform: translate(-50%, -50%);
   border-radius: 50%;
   background:
-    radial-gradient(circle, rgba(255, 225, 116, 0.28) 0 8%, rgba(234, 166, 38, 0.12) 28%, transparent 66%),
-    repeating-conic-gradient(from 8deg, rgba(255, 218, 105, 0.12) 0 1.2deg, transparent 1.2deg 8deg);
-  filter: blur(1px);
+    radial-gradient(circle, rgba(255, 238, 167, 0.24) 0 5%, rgba(244, 188, 55, 0.13) 18%, rgba(218, 132, 24, 0.055) 38%, transparent 68%),
+    repeating-conic-gradient(from 8deg, rgba(255, 218, 105, 0.09) 0 0.7deg, transparent 0.7deg 9deg);
+  -webkit-mask-image: radial-gradient(circle, #000 0 34%, rgba(0, 0, 0, 0.7) 48%, transparent 72%);
+  mask-image: radial-gradient(circle, #000 0 34%, rgba(0, 0, 0, 0.7) 48%, transparent 72%);
+  filter: blur(2px);
   opacity: 0;
   animation: none;
 }
@@ -375,13 +387,18 @@ a {
 .hero-title::after {
   content: "";
   position: absolute;
-  inset: -8% -24%;
+  left: 50%;
+  top: 50%;
   z-index: 2;
+  width: clamp(30rem, 62vw, 74rem);
+  height: clamp(8rem, 16vw, 18rem);
   pointer-events: none;
-  background: linear-gradient(110deg, transparent 38%, rgba(255, 211, 87, 0.08) 45%, rgba(255, 245, 192, 0.92) 50%, rgba(255, 185, 43, 0.12) 56%, transparent 63%);
+  border-radius: 50%;
+  background: radial-gradient(ellipse at center, rgba(255, 249, 215, 0.78) 0%, rgba(255, 216, 102, 0.28) 12%, rgba(238, 166, 42, 0.1) 34%, transparent 72%);
   mix-blend-mode: screen;
-  filter: blur(3px);
-  transform: translateX(-125%) skewX(-12deg);
+  filter: blur(11px);
+  transform: translate(-50%, -50%) scaleX(0.25);
+  opacity: 0;
   animation: none;
 }
 
@@ -427,10 +444,9 @@ a {
 }
 
 @keyframes lightning-sweep {
-  0% { opacity: 0; transform: translateX(-125%) skewX(-12deg); }
-  18% { opacity: 1; }
-  82% { opacity: 0.82; }
-  100% { opacity: 0; transform: translateX(125%) skewX(-12deg); }
+  0% { opacity: 0; transform: translate(-50%, -50%) scaleX(0.18) scaleY(0.5); }
+  28% { opacity: 0.9; }
+  100% { opacity: 0; transform: translate(-50%, -50%) scaleX(1.15) scaleY(1.2); }
 }
 
 .hero-meta {
@@ -446,13 +462,13 @@ a {
 .support-copy {
   max-width: 23rem;
   margin: 0;
-  font-size: clamp(0.78rem, 1vw, 1rem);
+  font-size: clamp(0.9rem, 1vw, 1.02rem);
   line-height: 1.6;
 }
 
 .hero-meta > span,
 .technical-note {
-  font-size: 0.52rem;
+  font-size: clamp(0.62rem, 0.63vw, 0.7rem);
   font-weight: 700;
   letter-spacing: 0.18em;
 }
@@ -488,7 +504,7 @@ a {
 .product-facts dt,
 .product-facts dd {
   margin: 0;
-  font-size: clamp(0.48rem, 0.56vw, 0.62rem);
+  font-size: clamp(0.62rem, 0.64vw, 0.72rem);
   font-weight: 700;
   letter-spacing: 0.14em;
 }
@@ -503,13 +519,12 @@ a {
 }
 
 .macro-copy {
-  justify-content: flex-end;
+  justify-content: center;
   align-items: flex-end;
   padding-left: 66vw;
   padding-right: clamp(2.5rem, 4vw, 6rem);
-  padding-bottom: 12vh;
   text-align: right;
-  background: radial-gradient(ellipse 58% 74% at 100% 52%, rgba(13, 3, 3, 0.96) 0%, rgba(13, 3, 3, 0.72) 42%, rgba(13, 3, 3, 0.2) 65%, transparent 82%);
+  background: none;
 }
 
 .macro-copy > * {
@@ -556,9 +571,10 @@ a {
   min-width: 0;
   padding: 0.68rem 0;
   border-top: 1px solid rgba(244, 238, 229, 0.16);
-  color: rgba(244, 238, 229, 0.76);
-  font-size: clamp(0.54rem, 0.68vw, 0.72rem);
+  color: rgba(244, 238, 229, 0.86);
+  font-size: clamp(0.72rem, 0.76vw, 0.84rem);
   letter-spacing: 0.09em;
+  text-shadow: 0 1px 10px rgba(7, 2, 2, 0.85);
 }
 
 .ingredient-ledger li span {
@@ -569,22 +585,22 @@ a {
 .ingredient-ledger li b {
   margin-right: 0.65rem;
   color: var(--gold);
-  font-size: 0.48rem;
+  font-size: 0.58rem;
 }
 
 .ingredient-ledger li strong {
   flex: none;
   color: var(--ink);
-  font-size: 0.56rem;
+  font-size: 0.7rem;
 }
 
 .usage-copy {
-  background: radial-gradient(ellipse 58% 76% at 100% 50%, rgba(13, 3, 3, 0.94) 0%, rgba(13, 3, 3, 0.65) 44%, rgba(13, 3, 3, 0.16) 68%, transparent 84%);
+  background: none;
 }
 
 .usage-copy h2 {
-  max-width: 10ch;
-  font-size: clamp(2.8rem, 4.7vw, 5.4rem);
+  max-width: 11ch;
+  font-size: clamp(2.8rem, 4vw, 4.8rem);
 }
 
 .usage-list {
@@ -598,23 +614,24 @@ a {
   margin: 0;
   padding: 0.65rem 0;
   border-top: 1px solid rgba(244, 238, 229, 0.16);
-  color: rgba(244, 238, 229, 0.78);
-  font-size: clamp(0.68rem, 0.85vw, 0.9rem);
+  color: rgba(244, 238, 229, 0.88);
+  font-size: clamp(0.82rem, 0.86vw, 0.96rem);
   line-height: 1.45;
+  text-shadow: 0 1px 10px rgba(7, 2, 2, 0.85);
 }
 
 .usage-list b {
   flex: none;
   color: var(--gold);
-  font-size: 0.52rem;
+  font-size: 0.6rem;
   letter-spacing: 0.12em;
 }
 
 .safety-note {
   max-width: 30rem;
   margin: 1.25rem 0 0;
-  color: var(--muted);
-  font-size: clamp(0.58rem, 0.7vw, 0.72rem);
+  color: rgba(244, 238, 229, 0.68);
+  font-size: clamp(0.68rem, 0.72vw, 0.78rem);
   line-height: 1.55;
 }
 
@@ -660,8 +677,8 @@ a {
 
 .route-track {
   position: absolute;
-  left: clamp(8rem, 15vw, 18rem);
-  right: clamp(8rem, 15vw, 18rem);
+  left: calc(clamp(4.8rem, 9vw, 10rem) + 9.5rem);
+  right: calc(clamp(4.8rem, 9vw, 10rem) + 10.5rem);
   bottom: calc(18vh + 0.7rem);
   height: 1px;
   background: rgba(244, 238, 229, 0.16);
@@ -690,7 +707,7 @@ a {
 
 .route-point small {
   color: var(--gold);
-  font-size: 0.5rem;
+  font-size: 0.62rem;
   letter-spacing: 0.18em;
 }
 
@@ -708,7 +725,7 @@ a {
 }
 
 .supply-copy {
-  background: radial-gradient(ellipse 62% 76% at 0% 50%, rgba(13, 3, 3, 0.96) 0%, rgba(13, 3, 3, 0.7) 43%, rgba(13, 3, 3, 0.18) 67%, transparent 84%);
+  background: none;
 }
 
 .company-copy h2,
@@ -724,7 +741,7 @@ a {
   padding-top: 0.8rem;
   border-top: 1px solid rgba(244, 238, 229, 0.2);
   color: var(--muted);
-  font-size: 0.54rem;
+  font-size: 0.66rem;
   letter-spacing: 0.17em;
 }
 
@@ -763,7 +780,7 @@ a {
   width: min(28rem, 46vw);
   margin: 1.6rem 0 0;
   color: var(--muted);
-  font-size: 0.72rem;
+  font-size: 0.82rem;
   line-height: 1.6;
   letter-spacing: 0.05em;
 }
@@ -776,7 +793,7 @@ a {
   display: flex;
   justify-content: space-between;
   color: rgba(244, 238, 229, 0.34);
-  font-size: 0.5rem;
+  font-size: 0.6rem;
   letter-spacing: 0.18em;
 }
 
@@ -793,7 +810,7 @@ a {
   .route-point { position: absolute; bottom: 18%; }
   .route-point--start { left: 2.5rem; }
   .route-point--end { right: 2.5rem; }
-  .route-track { left: 7rem; right: 7rem; bottom: calc(18% + 0.7rem); }
+  .route-track { left: 11rem; right: 11rem; bottom: calc(18% + 0.7rem); }
 }
 
 @media (max-width: 700px) {
@@ -830,7 +847,7 @@ a {
   .route-statement { left: 1.25rem; width: calc(100% - 2.5rem); }
   .route-point--start { left: 1.25rem; }
   .route-point--end { right: 1.25rem; }
-  .route-track { left: 5rem; right: 5rem; }
+  .route-track { left: 5rem; right: 5rem; bottom: calc(8% - 1.1rem); }
   .company-line { width: 100%; }
   .company-line span:last-child { display: none; }
   .contact-links { flex-direction: column; align-items: flex-start; gap: 1.1rem; }
