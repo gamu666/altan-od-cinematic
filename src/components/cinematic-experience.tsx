@@ -129,7 +129,16 @@ export function CinematicExperience() {
 
       <header className="site-header">
         <a className="brand-mark" href="#opening" aria-label="Алтан Заан Анар - эхлэл">
-          <span className="brand-symbol">АЗА</span>
+          <svg
+            className="brand-symbol"
+            viewBox="0 0 520 680"
+            role="img"
+            aria-label="Алтан Заан Анар лого"
+          >
+            <path d="M20 306V132C20 61 77 20 150 20H168V430M20 265H168" />
+            <path d="M205 20H302V658H202M205 306H302" />
+            <path d="M342 430V20H360C433 20 500 61 500 132V306M342 265H500" />
+          </svg>
           <span className="brand-name">АЛТАН ЗААН АНАР</span>
         </a>
         <a className="header-contact" href="#contact">ХОЛБОО БАРИХ <span>↗</span></a>

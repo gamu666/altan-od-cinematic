@@ -192,7 +192,6 @@ a {
   align-items: center;
   justify-content: space-between;
   padding: 1.8rem 2.3rem;
-  mix-blend-mode: difference;
 }
 
 .brand-mark {
@@ -202,22 +201,24 @@ a {
 }
 
 .brand-symbol {
-  display: grid;
-  place-items: center;
-  width: 2rem;
-  height: 2rem;
-  border: 1px solid currentColor;
-  border-radius: 50%;
-  font-size: 0.52rem;
-  font-weight: 800;
-  letter-spacing: -0.05em;
+  width: 2.05rem;
+  height: 2.7rem;
+  overflow: visible;
+  fill: none;
+  stroke: #ee686b;
+  stroke-width: 18;
+  stroke-linecap: square;
+  stroke-linejoin: miter;
+  filter: drop-shadow(0 0 0.65rem rgba(238, 104, 107, 0.22));
 }
 
 .brand-name,
 .header-contact {
+  color: var(--ink);
   font-size: 0.62rem;
   font-weight: 700;
   letter-spacing: 0.16em;
+  text-shadow: 0 1px 14px rgba(7, 2, 2, 0.9);
 }
 
 .header-contact {
