@@ -20,10 +20,11 @@ const beats = [
   { number: "02", label: "Алтан Од" },
   { number: "03", label: "Деталь" },
   { number: "04", label: "Найрлага" },
-  { number: "05", label: "Замнал" },
-  { number: "06", label: "Нийлүүлэлт" },
-  { number: "07", label: "Компани" },
-  { number: "08", label: "Холбоо" },
+  { number: "05", label: "Хэрэглээ" },
+  { number: "06", label: "Замнал" },
+  { number: "07", label: "Нийлүүлэлт" },
+  { number: "08", label: "Компани" },
+  { number: "09", label: "Холбоо" },
 ];
 
 export function CinematicExperience() {
@@ -34,8 +35,44 @@ export function CinematicExperience() {
     gsap.registerPlugin(ScrollTrigger);
     const root = filmRef.current;
     if (!root) return;
+    let openingTimeline: gsap.core.Timeline | undefined;
 
     const context = gsap.context(() => {
+      openingTimeline = gsap.timeline({ paused: true });
+      openingTimeline
+        .fromTo(".hero-copy .eyebrow", {
+          autoAlpha: 0,
+          y: 12,
+        }, {
+          autoAlpha: 1,
+          y: 0,
+          duration: 0.5,
+          ease: "power2.out",
+        })
+        .fromTo(".hero-title span", {
+          autoAlpha: 0,
+          x: -42,
+          clipPath: "inset(0 100% 0 0)",
+          filter: "brightness(3) blur(9px)",
+        }, {
+          autoAlpha: 1,
+          x: 0,
+          clipPath: "inset(0 0% 0 0)",
+          filter: "brightness(1) blur(0px)",
+          duration: 1.05,
+          stagger: 0.13,
+          ease: "power4.out",
+        }, "-=0.18")
+        .fromTo(".hero-meta", {
+          autoAlpha: 0,
+          y: 18,
+        }, {
+          autoAlpha: 1,
+          y: 0,
+          duration: 0.72,
+          ease: "power3.out",
+        }, "-=0.52");
+
       gsap.to(progressRef.current, {
         scaleX: 1,
         ease: "none",
@@ -113,7 +150,16 @@ export function CinematicExperience() {
       });
     }, root);
 
-    return () => context.revert();
+    const revealOpening = () => {
+      root.querySelector(".hero-copy")?.classList.add("is-revealed");
+      openingTimeline?.play(0);
+    };
+    window.addEventListener("balm-intro-complete", revealOpening);
+
+    return () => {
+      window.removeEventListener("balm-intro-complete", revealOpening);
+      context.revert();
+    };
   }, []);
 
   return (
@@ -170,7 +216,12 @@ export function CinematicExperience() {
         <div className="story-copy copy-left">
           <p className="eyebrow">THE ICONIC RED TIN</p>
           <h2>ТАНИЛ ТӨРХ.<br />ТҮҮХТ<br />ҮНЭР.</h2>
-          <p className="support-copy">Улаан металл савнаас ногоон од хүртэл — үе дамжин танигдсан дүр төрх.</p>
+          <p className="support-copy">1970 оноос өнөөдрийг хүртэл танил улаан металл сав, ногоон дэвсгэр дээрх алтан од.</p>
+          <dl className="product-facts" aria-label="Бүтээгдэхүүний үндсэн мэдээлэл">
+            <div><dt>ГАРАЛ</dt><dd>ВЬЕТНАМ</dd></div>
+            <div><dt>ТӨРӨЛ</dt><dd>ҮНЭРТ ГАВАР</dd></div>
+            <div><dt>ҮЙЛДВЭРЛЭЛ</dt><dd>1970 → ӨНӨӨДӨР</dd></div>
+          </dl>
         </div>
       </section>
 
@@ -182,14 +233,32 @@ export function CinematicExperience() {
         </div>
       </section>
 
-      <section className="story-section story-section--ingredients" data-scene="ingredients">
+      <section id="ingredients" className="story-section story-section--ingredients" data-scene="ingredients">
         <div className="story-copy copy-left ingredient-copy">
-          <p className="eyebrow">AROMATIC COMPOSITION</p>
-          <h2>ЗУРГААН ҮНЭР.<br />НЭГ<br />ТЭНЦВЭР.</h2>
-          <div className="ingredient-orbit" aria-label="Бүтээгдэхүүний найрлага">
-            <span>MENTHOL</span><span>CAMPHOR</span><span>PEPPERMINT</span>
-            <span>EUCALYPTUS</span><span>BASIL</span><span>CINNAMON</span>
+          <p className="eyebrow">AROMATIC COMPOSITION · 100 ГР ТОСОНД</p>
+          <h2>ЗУРГААН<br />НАЙРЛАГА.<br />НЭГ ТАНИЛ<br />ҮНЭР.</h2>
+          <ol className="ingredient-ledger" aria-label="Бүтээгдэхүүний найрлага">
+            <li><span><b>01</b>MENTHOL</span><strong>1.12 Г</strong></li>
+            <li><span><b>02</b>CAMPHOR</span><strong>19.47 Г</strong></li>
+            <li><span><b>03</b>PEPPERMINT OIL</span><strong>5.94 Г</strong></li>
+            <li><span><b>04</b>EUCALYPTUS OIL</span><strong>21.45 Г</strong></li>
+            <li><span><b>05</b>BASIL OIL</span><strong>1.88 Г</strong></li>
+            <li><span><b>06</b>CINNAMON OIL</span><strong>1.88 Г</strong></li>
+          </ol>
+        </div>
+      </section>
+
+      <section id="usage" className="story-section story-section--usage" data-scene="usage">
+        <div className="story-copy copy-right usage-copy">
+          <p className="eyebrow">BROCHURE USE GUIDE</p>
+          <h2>ӨДӨР ТУТМЫН<br />ОЛОН<br />ХЭРЭГЛЭЭ.</h2>
+          <div className="usage-list" aria-label="Brochure-д заасан хэрэглээ">
+            <p><b>01</b><span>Ханиад, томуу, хамар битүүрэх үед</span></p>
+            <p><b>02</b><span>Толгой өвдөх, дотор муухайрах үед</span></p>
+            <p><b>03</b><span>Булчин, нуруу, үе мөч чилэх үед</span></p>
+            <p><b>04</b><span>Шавж, шумуулд хазуулсан үед</span></p>
           </div>
+          <p className="safety-note">Ил шарх, нүд, салст бүрхэвчид түрхэхгүй. Найрлагад харшилтай бол хэрэглэхгүй.</p>
         </div>
       </section>
 

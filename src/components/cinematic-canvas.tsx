@@ -43,9 +43,9 @@ const initialStory: StoryState = {
   rotX: -0.12,
   rotY: -0.32,
   rotZ: -0.08,
-  ambient: 0.025,
-  gold: 0.2,
-  red: 0.1,
+  ambient: 0.055,
+  gold: 0.35,
+  red: 0.18,
   green: 0,
   atmosphere: 0,
   supply: 0,
@@ -239,6 +239,7 @@ function Scene() {
       duration: 2.6,
       delay: 0.35,
       ease: "power4.out",
+      onComplete: () => window.dispatchEvent(new Event("balm-intro-complete")),
     });
     const timeline = gsap.timeline({
       defaults: { ease: "power2.inOut", duration: 1 },
@@ -309,6 +310,20 @@ function Scene() {
       }, 3)
       .to(story.current, {
         camZ: 5.8,
+        productX: -1.45,
+        productY: 0.12,
+        productZ: 0,
+        productScale: 0.88,
+        rotX: -0.26,
+        rotY: 0.46,
+        rotZ: -0.06,
+        atmosphere: 0.62,
+        green: 1.8,
+        gold: 5.6,
+        red: 1.8,
+      }, 4)
+      .to(story.current, {
+        camZ: 5.8,
         productX: 0,
         productY: -0.1,
         productZ: -0.6,
@@ -320,7 +335,7 @@ function Scene() {
         green: 0.9,
         gold: 5.8,
         red: 2.3,
-      }, 4)
+      }, 5)
       .to(story.current, {
         camZ: 6.8,
         productY: -0.25,
@@ -331,7 +346,7 @@ function Scene() {
         supply: 1,
         gold: 6.2,
         red: 2.7,
-      }, 5)
+      }, 6)
       .to(story.current, {
         camX: 0,
         camY: 0,
@@ -349,7 +364,7 @@ function Scene() {
         gold: 6.8,
         red: 1.4,
         green: 0.5,
-      }, 6)
+      }, 7)
       .to(story.current, {
         camZ: 4.4,
         lookX: 0.42,
@@ -362,7 +377,7 @@ function Scene() {
         gold: 7.8,
         red: 2.2,
         green: 0.25,
-      }, 7);
+      }, 8);
 
     return () => {
       introTween.kill();
@@ -380,7 +395,7 @@ function Scene() {
       const entrance = THREE.MathUtils.smootherstep(intro.current.progress, 0, 1);
       mainGroupRef.current.position.set(
         current.productX,
-        current.productY,
+        current.productY + Math.sin(state.clock.elapsedTime * 0.65) * 0.025 * entrance,
         current.productZ + THREE.MathUtils.lerp(-9, 0, entrance),
       );
       mainGroupRef.current.scale.setScalar(current.productScale * THREE.MathUtils.lerp(0.05, 1, entrance));
@@ -389,7 +404,6 @@ function Scene() {
         current.rotY + state.pointer.x * 0.07 + THREE.MathUtils.lerp(-0.9, 0, entrance),
         current.rotZ,
       );
-      mainGroupRef.current.position.y += Math.sin(state.clock.elapsedTime * 0.65) * 0.025 * entrance;
     }
 
     if (ambientLightRef.current) ambientLightRef.current.intensity = THREE.MathUtils.damp(ambientLightRef.current.intensity, current.ambient, 4, delta);
@@ -400,13 +414,13 @@ function Scene() {
 
   return (
     <>
-      <fog attach="fog" args={["#090202", 6.2, 15]} />
+      <fog attach="fog" args={["#120504", 6.4, 15.5]} />
       <StudioEnvironment />
       <ambientLight ref={ambientLightRef} intensity={initialStory.ambient} />
       <spotLight ref={goldLightRef} position={[2.8, 4.5, 5]} angle={0.42} penumbra={0.85} color="#ffd68a" castShadow />
       <pointLight ref={redLightRef} position={[-3.2, -1.3, 2.2]} color="#e51d24" distance={8} />
       <pointLight ref={greenLightRef} position={[3.3, 1.2, 1.5]} color="#2cac61" distance={7} />
-      <directionalLight position={[-3, 1, 4]} intensity={0.58} color="#fff0d2" />
+      <directionalLight position={[-3, 1, 4]} intensity={0.76} color="#fff0d2" />
 
       <group ref={mainGroupRef}>
         <BalmModel source={scene} />
@@ -430,7 +444,7 @@ export default function CinematicCanvas() {
       shadows={{ type: THREE.PCFShadowMap }}
       onCreated={({ gl }) => {
         gl.toneMapping = THREE.ACESFilmicToneMapping;
-        gl.toneMappingExposure = 1.28;
+        gl.toneMappingExposure = 1.36;
         gl.outputColorSpace = THREE.SRGBColorSpace;
       }}
     >
