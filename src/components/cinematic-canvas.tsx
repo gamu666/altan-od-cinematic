@@ -1,6 +1,6 @@
 "use client";
 
-import { Suspense, useLayoutEffect, useMemo, useRef } from "react";
+import { Suspense, useEffect, useLayoutEffect, useMemo, useRef } from "react";
 import { Canvas, useFrame, useThree } from "@react-three/fiber";
 import { Environment, Lightformer, useGLTF } from "@react-three/drei";
 import * as THREE from "three";
@@ -29,6 +29,7 @@ type StoryState = {
 };
 
 const MODEL_URL = `${process.env.NEXT_PUBLIC_BASE_PATH ?? ""}/models/golden-star-balm.glb?v=5`;
+const INTRO_SCALE = 1.88;
 
 const initialStory: StoryState = {
   camX: 0,
@@ -39,7 +40,7 @@ const initialStory: StoryState = {
   productX: 1.35,
   productY: 0,
   productZ: 0,
-  productScale: 1.03,
+  productScale: 0.94,
   rotX: -0.2,
   rotY: -0.22,
   rotZ: 0.035,
@@ -333,7 +334,7 @@ function SupplyField({ source, story }: { source: THREE.Group; story: React.Muta
   );
 }
 
-function Scene() {
+function Scene({ onReady }: { onReady?: () => void }) {
   const { scene } = useGLTF(MODEL_URL);
   const mainGroupRef = useRef<THREE.Group>(null);
   const ambientLightRef = useRef<THREE.AmbientLight>(null);
@@ -346,6 +347,11 @@ function Scene() {
   const pointerTarget = useRef({ x: 0, y: 0 });
   const pointerMotion = useRef({ x: 0, y: 0 });
   const lookMotion = useRef({ x: initialStory.lookX, y: initialStory.lookY });
+
+  useEffect(() => {
+    const frame = window.requestAnimationFrame(() => onReady?.());
+    return () => window.cancelAnimationFrame(frame);
+  }, [onReady]);
 
   useLayoutEffect(() => {
     gsap.registerPlugin(ScrollTrigger);
@@ -415,7 +421,7 @@ function Scene() {
       const targetX = current.productX;
       const targetY = current.productY + Math.sin(state.clock.elapsedTime * 0.65) * 0.025 * entrance;
       const targetZ = current.productZ + THREE.MathUtils.lerp(0.9, 0, entrance);
-      const targetScale = current.productScale * THREE.MathUtils.lerp(1.72, 1, entrance);
+      const targetScale = current.productScale * THREE.MathUtils.lerp(INTRO_SCALE, 1, entrance);
       const targetRotX = current.rotX + pointerMotion.current.y * 0.1 + THREE.MathUtils.lerp(-0.08, 0, entrance);
       const targetRotY = current.rotY + pointerMotion.current.x * 0.16 + THREE.MathUtils.lerp(-0.12, 0, entrance);
 
@@ -449,7 +455,7 @@ function Scene() {
         ref={mainGroupRef}
         position={[initialStory.productX, initialStory.productY, initialStory.productZ + 0.9]}
         rotation={[initialStory.rotX - 0.08, initialStory.rotY - 0.12, initialStory.rotZ]}
-        scale={initialStory.productScale * 1.72}
+        scale={initialStory.productScale * INTRO_SCALE}
       >
         <BalmModel source={scene} />
       </group>
@@ -461,7 +467,7 @@ function Scene() {
   );
 }
 
-export default function CinematicCanvas() {
+export default function CinematicCanvas({ onReady }: { onReady?: () => void }) {
   return (
     <Canvas
       className="webgl-canvas"
@@ -476,7 +482,7 @@ export default function CinematicCanvas() {
       }}
     >
       <Suspense fallback={null}>
-        <Scene />
+        <Scene onReady={onReady} />
       </Suspense>
     </Canvas>
   );

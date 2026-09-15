@@ -21,6 +21,13 @@ export default function RootLayout({ children }: Readonly<{ children: React.Reac
       <head>
         <link
           rel="preload"
+          href={`${basePath}/images/hero-balm-preview.png?v=1`}
+          as="image"
+          type="image/png"
+          fetchPriority="high"
+        />
+        <link
+          rel="preload"
           href={`${basePath}/models/golden-star-balm.glb?v=5`}
           as="fetch"
           type="model/gltf-binary"

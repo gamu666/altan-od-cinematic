@@ -1,6 +1,7 @@
 "use client";
 
-import { useLayoutEffect, useRef } from "react";
+import Image from "next/image";
+import { useCallback, useLayoutEffect, useRef, useState } from "react";
 import gsap from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
 import CinematicCanvas from "./cinematic-canvas";
@@ -20,6 +21,8 @@ const beats = [
 export function CinematicExperience() {
   const filmRef = useRef<HTMLElement>(null);
   const progressRef = useRef<HTMLDivElement>(null);
+  const [modelReady, setModelReady] = useState(false);
+  const handleModelReady = useCallback(() => setModelReady(true), []);
 
   useLayoutEffect(() => {
     gsap.registerPlugin(ScrollTrigger);
@@ -194,7 +197,16 @@ export function CinematicExperience() {
 
       <div className="cinematic-stage" aria-hidden="true">
         <div className="depth-title depth-title--back">GOLDEN STAR</div>
-        <CinematicCanvas />
+        <Image
+          className={`hero-model-preview${modelReady ? " is-hidden" : ""}`}
+          src={`${process.env.NEXT_PUBLIC_BASE_PATH ?? ""}/images/hero-balm-preview.png?v=1`}
+          alt=""
+          width={800}
+          height={450}
+          unoptimized
+          fetchPriority="high"
+        />
+        <CinematicCanvas onReady={handleModelReady} />
         <div className="film-grain" />
         <div className="frame-corners" />
       </div>
