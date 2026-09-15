@@ -37,7 +37,7 @@ const initialStory: StoryState = {
   camZ: 5.45,
   lookX: 0,
   lookY: 0,
-  productX: 1.35,
+  productX: 1.08,
   productY: 0,
   productZ: 0,
   productScale: 0.94,
@@ -57,7 +57,7 @@ const sceneStates: StoryState[] = [
   {
     ...initialStory,
     camZ: 5.15,
-    productX: 1.45,
+    productX: 1.12,
     productScale: 1.14,
     rotX: -0.24,
     rotY: -0.08,
@@ -70,7 +70,7 @@ const sceneStates: StoryState[] = [
     camY: 0.1,
     camZ: 4.05,
     lookX: -0.3,
-    productX: -1.05,
+    productX: -1.28,
     productY: 0.08,
     productScale: 1.34,
     rotX: -0.3,
@@ -82,7 +82,7 @@ const sceneStates: StoryState[] = [
   {
     ...initialStory,
     camZ: 5.25,
-    productX: 2.05,
+    productX: 0.62,
     productY: 0.12,
     productScale: 0.86,
     rotX: -0.37,
@@ -96,7 +96,7 @@ const sceneStates: StoryState[] = [
   {
     ...initialStory,
     camZ: 5.7,
-    productX: -1.95,
+    productX: -1.05,
     productY: 0.08,
     productScale: 0.78,
     rotX: -0.24,
@@ -138,7 +138,7 @@ const sceneStates: StoryState[] = [
     ...initialStory,
     camZ: 4.9,
     lookX: 0.34,
-    productX: 1.78,
+    productX: 1.34,
     productY: 0.06,
     productScale: 0.98,
     rotX: -0.25,
@@ -152,7 +152,7 @@ const sceneStates: StoryState[] = [
     ...initialStory,
     camZ: 4.55,
     lookX: 0.4,
-    productX: 1.9,
+    productX: 1.42,
     productY: 0.16,
     productScale: 1.08,
     rotX: -0.18,
@@ -418,10 +418,12 @@ function Scene({ onReady }: { onReady?: () => void }) {
 
     if (mainGroupRef.current) {
       const entrance = intro.current.progress;
-      const targetX = current.productX;
+      const responsiveX = THREE.MathUtils.clamp(state.size.width / 1600, 0.42, 1);
+      const responsiveScale = THREE.MathUtils.clamp(state.size.width / 1180, 0.64, 1);
+      const targetX = current.productX * responsiveX;
       const targetY = current.productY + Math.sin(state.clock.elapsedTime * 0.65) * 0.025 * entrance;
       const targetZ = current.productZ + THREE.MathUtils.lerp(0.9, 0, entrance);
-      const targetScale = current.productScale * THREE.MathUtils.lerp(INTRO_SCALE, 1, entrance);
+      const targetScale = current.productScale * THREE.MathUtils.lerp(INTRO_SCALE, 1, entrance) * responsiveScale;
       const targetRotX = current.rotX + pointerMotion.current.y * 0.1 + THREE.MathUtils.lerp(-0.08, 0, entrance);
       const targetRotY = current.rotY + pointerMotion.current.x * 0.16 + THREE.MathUtils.lerp(-0.12, 0, entrance);
 
