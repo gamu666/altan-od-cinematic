@@ -6,8 +6,8 @@ import { ScrollTrigger } from "gsap/ScrollTrigger";
 import CinematicCanvas from "./cinematic-canvas";
 
 const beats = [
-  { number: "01", label: "Эхлэл" },
-  { number: "02", label: "Алтан Од" },
+  { number: "01", label: "Алтан Од" },
+  { number: "02", label: "Төрх" },
   { number: "03", label: "Деталь" },
   { number: "04", label: "Найрлага" },
   { number: "05", label: "Хэрэглээ" },
@@ -293,7 +293,12 @@ export function CinematicExperience() {
 
       <section id="route" className="story-section story-section--route" data-scene="route">
         <div className="story-copy route-copy">
-          <div className="route-track" aria-hidden="true"><span /><i /></div>
+          <div className="route-track" aria-hidden="true">
+            <b className="route-arrow route-arrow--start">›</b>
+            <span />
+            <i />
+            <b className="route-arrow route-arrow--end">›</b>
+          </div>
           <div className="route-point route-point--start"><small>21°01′N</small><strong>VIETNAM</strong></div>
           <div className="route-statement">
             <p className="eyebrow">ВЬЕТНАМААС МОНГОЛ РУУ</p>
